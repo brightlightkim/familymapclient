@@ -23,6 +23,7 @@ public class ServerProxy {
     private static ServerProxy serverProxy;
     private String serverHost;
     private String serverPort;
+    private Gson gson;
 
     public static ServerProxy initialize()
     {
@@ -47,8 +48,16 @@ public class ServerProxy {
             http.setRequestMethod("POST");
             http.setDoOutput(true);
             http.addRequestProperty("Accept", "application/json");
-            http.connect();
+            http.connect();//TODO: Question why this causes an error message.
+            //So I set a breakpoint here and in some reasons, it gets error,
+            //and throw my application.. Can you help me out with this please?
+            //Sorry just wait for a second please. my computer is slow.
+            //Can you see this??
 
+            String requestInfo = gson.toJson(request);
+            OutputStream reqBody = http.getOutputStream();
+            writeString(requestInfo, reqBody);
+            reqBody.close();
 
             if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 InputStream respBody = http.getInputStream();
