@@ -1,5 +1,7 @@
 package server;
 
+import com.google.gson.Gson;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -19,6 +21,8 @@ import Result.RegisterResult;
 public class ServerProxy {
 
     private static ServerProxy serverProxy;
+    private String serverHost;
+    private String serverPort;
 
     public static ServerProxy initialize()
     {
@@ -28,9 +32,6 @@ public class ServerProxy {
         return serverProxy;
     }
 
-    private String serverHost;
-    private String serverPort;
-
     public void setServerHost(String serverHost) {
         this.serverHost = serverHost;
     }
@@ -39,16 +40,16 @@ public class ServerProxy {
         this.serverPort = serverPort;
     }
 
-    LoginResult login(LoginRequest request) {
+    public LoginResult login(LoginRequest request) {
         try {
-            URL url = new URL("http://" + serverHost + ":" + serverPort + "/games/list");
+            URL url = new URL("http://" + serverHost + ":" + serverPort + "/user/login");
             HttpURLConnection http = (HttpURLConnection)url.openConnection();
-            http.setRequestMethod("GET");
-            http.setDoOutput(false);
-            //So here goes the AuthToken
-            http.addRequestProperty("Authorization", "afj232hj2332");
+            http.setRequestMethod("POST");
+            http.setDoOutput(true);
             http.addRequestProperty("Accept", "application/json");
             http.connect();
+
+
             if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 InputStream respBody = http.getInputStream();
                 String respData = readString(respBody);
@@ -67,15 +68,15 @@ public class ServerProxy {
         return null;
     }
 
-    RegisterResult register(RegisterRequest request){
+    public RegisterResult register(RegisterRequest request){
         return null;
     }
 
-    PersonsResult getPeople(AuthToken authToken){
+    public PersonsResult getPeople(AuthToken authToken){
         return null;
     }
 
-    EventsResult getEvents(AuthToken authToken) {
+    public EventsResult getEvents(AuthToken authToken) {
         return null;
     }
 
