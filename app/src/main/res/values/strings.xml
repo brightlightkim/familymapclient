@@ -10,9 +10,10 @@
     <string name="userName">User Name:</string>
     <string name="password">Password:</string>
 
-    <string name="clearButton">Clear</string>
-    <string name="submitButton">Submit</string>
     <string name="gender">Gender:</string>
     <string name="male">Male</string>
     <string name="female">Female</string>
+
+    <string name="registerButton">REGISTER</string>
+    <string name="loginButton">SIGN IN</string>
 </resources>

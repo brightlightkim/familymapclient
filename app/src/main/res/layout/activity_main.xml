@@ -124,14 +124,19 @@
                 android:layout_width="wrap_content"
                 android:gravity="end"
                 android:text="@string/gender"/>
-            <RadioButton android:id="@+id/radio_pirates"
+            <RadioGroup
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/male"/>
-            <RadioButton android:id="@+id/radio_ninjas"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/female"/>
+                android:orientation="horizontal">
+                <RadioButton android:id="@+id/male"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/male"/>
+                <RadioButton android:id="@+id/female"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/female"/>
+            </RadioGroup>
         </TableRow>
 
         <LinearLayout
@@ -140,17 +145,17 @@
             android:orientation="horizontal"
             android:paddingTop="20dp"
             android:gravity="center">
-            <Button
-                android:id="@+id/clearButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/clearButton" />
 
             <Button
-                android:id="@+id/submitButton"
+                android:id="@+id/loginButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/submitButton" />
+                android:text="@string/loginButton"/>
+            <Button
+                android:id="@+id/registerButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/registerButton"/>
         </LinearLayout>
     </TableLayout>
 </ScrollView>
