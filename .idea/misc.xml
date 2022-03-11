@@ -4,6 +4,8 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/brightlightkim/familymapclient/app/src/main/res/layout/activity_main.xml" value="0.24010416666666667" />
+        <entry key="..\:/Users/brightlightkim/familymapclient/app/src/main/res/layout/fragment_login.xml" value="0.13903985507246377" />
+        <entry key="..\:/Users/brightlightkim/familymapclient/app/src/main/res/layout/login_fragment.xml" value="0.13903985507246377" />
       </map>
     </option>
   </component>
