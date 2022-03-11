@@ -43,7 +43,19 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Lis
                 ((LoginFragment) currentFragment).registerListener(this);
             }
         }
-
+        /**
+         * For Activity to change to another Activity,
+         * We do it by intent.
+         *
+         * Sending
+         * Intent intent = new Intent(MainActivity.this, ReceivingActivity.class);
+         * intent.putExtra(ReceivingActivity.TEXT_KEY, editText.getText().toString());
+         * startActivity(intent); //It begins the activity.
+         *
+         * Getting
+         * Intent intent = getIntent();
+         * String receivedText = intent.getString(TEXT_KEY);
+         */
     }
 
     private Fragment createLoginFragment() {

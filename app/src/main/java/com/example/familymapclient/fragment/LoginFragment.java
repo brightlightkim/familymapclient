@@ -108,8 +108,26 @@ public class LoginFragment extends Fragment {
                     // server.getPeople(authToken);
                     // server.getEvents(authToken);
                     Toast.makeText(view.getContext(), firstName.getText().toString() + "," + lastName.getText().toString(), Toast.LENGTH_SHORT).show();
-                    //TODO:After Login Assignment remove the notifyDone() part.
+                    //TODO:After Login Assignment remove the notifyDone() part
                     //listener.notifyDone();
+                    /**
+                     * String text is the parameter
+                     * TEXT_KEY is defined in the beginning of the LoginFragment
+                     * Send Data to Fragment
+                     *
+                     * LoginFragment fragment = new LoginFragment();
+                     * Bundle arguments = new Bundle(); //Map >> Key Value pairs
+                     * arguments.putString(LoginFragment.TEXT_KEY, text);
+                     * fragment.setArguments(arguments);
+                     *
+                     * return fragment
+                     *
+                     * Where Receiving
+                     * if (getArgument() != null){
+                     * TextView textView = view.findViewById(R.id.blabla);
+                     * String receivedText = getArguments().getString(TEXT_KEY);
+                     * textView.setText(receivedText);
+                     */
                 }
                 else {//Fail
                     Toast.makeText(view.getContext(), "login failed", Toast.LENGTH_SHORT).show();
