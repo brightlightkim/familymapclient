@@ -1,4 +1,6 @@
-package data;
+package com.example.familymapclient.data;
+
+import com.example.familymapclient.Settings;
 
 import java.util.List;
 import java.util.Map;

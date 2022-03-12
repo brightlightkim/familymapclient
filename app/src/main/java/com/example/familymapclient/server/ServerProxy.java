@@ -1,4 +1,4 @@
-package server;
+package com.example.familymapclient.server;
 
 import com.google.gson.Gson;
 
@@ -81,11 +81,11 @@ public class ServerProxy {
         return null;
     }
 
-    public PersonsResult getPeople(AuthToken authToken){
+    public PersonsResult getPeople(String authToken){
         return null;
     }
 
-    public EventsResult getEvents(AuthToken authToken) {
+    public EventsResult getEvents(String authToken) {
         return null;
     }
 

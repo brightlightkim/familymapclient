@@ -2,6 +2,8 @@ package com.example.familymapclient.fragment;
 
 import android.arch.lifecycle.ViewModelProvider;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,14 +15,24 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
-import com.example.familymapclient.MainActivity;
 import com.example.familymapclient.R;
+import com.example.familymapclient.server.ServerProxy;
+import com.example.familymapclient.task.LoginTask;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import Request.LoginRequest;
 import Result.LoginResult;
-import server.ServerProxy;
+
 
 public class LoginFragment extends Fragment {
+
+    private final static String ID_KEY = "id";
+    private final static String USERNAME_KEY = "username";
+    private final static String AUTH_KEY = "authorized token";
+    private final static String MESSAGE_KEY = "message";
+    private final static String SUCCESS_KEY = "success";
 
     private LoginViewModel mViewModel;
 
@@ -86,7 +98,7 @@ public class LoginFragment extends Fragment {
         loginButton = view.findViewById(R.id.loginButton);
         registerButton = view.findViewById(R.id.registerButton);
 
-        //this is setting the server with the host and port.
+        //this is setting the com.example.familymapclient.server with the host and port.
         server = new ServerProxy();
 
         loginButton.setOnClickListener(v -> {
@@ -95,45 +107,31 @@ public class LoginFragment extends Fragment {
 
             String username = userName.getText().toString();
             String password = userPassword.getText().toString();
+
             LoginRequest request = new LoginRequest(username, password);
 
-            LoginResult result = server.login(request);
-            if (result == null){
-                Toast.makeText(view.getContext(), "Failed to Connect", Toast.LENGTH_SHORT).show();
-            }
-            else {
-                if (result.isSuccess()){
-                    String authToken = result.getAuthtoken();
-                    // Make additional requests to get the data of the user's family and events.
-                    // server.getPeople(authToken);
-                    // server.getEvents(authToken);
-                    Toast.makeText(view.getContext(), firstName.getText().toString() + "," + lastName.getText().toString(), Toast.LENGTH_SHORT).show();
-                    //TODO:After Login Assignment remove the notifyDone() part
-                    //listener.notifyDone();
-                    /**
-                     * String text is the parameter
-                     * TEXT_KEY is defined in the beginning of the LoginFragment
-                     * Send Data to Fragment
-                     *
-                     * LoginFragment fragment = new LoginFragment();
-                     * Bundle arguments = new Bundle(); //Map >> Key Value pairs
-                     * arguments.putString(LoginFragment.TEXT_KEY, text);
-                     * fragment.setArguments(arguments);
-                     *
-                     * return fragment
-                     *
-                     * Where Receiving
-                     * if (getArgument() != null){
-                     * TextView textView = view.findViewById(R.id.blabla);
-                     * String receivedText = getArguments().getString(TEXT_KEY);
-                     * textView.setText(receivedText);
-                     */
-                }
-                else {//Fail
-                    Toast.makeText(view.getContext(), "login failed", Toast.LENGTH_SHORT).show();
-                }
-            }
+            Handler uiThreadMessageHandler = new Handler() {
+                @Override
+                public void handleMessage(Message message) {
+                    Bundle bundle = message.getData();
+                    //So this receives the data >> and I need to use that data to see what are the value.
+                    //So send the class of LoginResult and base on that toast it.
+                    //Later it calls the Function of switching to the map fragment.
+                    if (bundle.getBoolean(SUCCESS_KEY)){
+                        Toast.makeText(view.getContext(), (username + " " + password), Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        Toast.makeText(view.getContext(), "Login Failed", Toast.LENGTH_SHORT).show();
+                    }
 
+                }
+            };
+
+            LoginTask login = new LoginTask(uiThreadMessageHandler, request);
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            executor.submit(login);
+
+            //TODO: How to get the data from the Login Task?
         });
         return view;
     }
@@ -146,3 +144,22 @@ public class LoginFragment extends Fragment {
     }
 
 }
+
+/**
+ * String text is the parameter
+ * TEXT_KEY is defined in the beginning of the LoginFragment
+ * Send Data to Fragment
+ *
+ * LoginFragment fragment = new LoginFragment();
+ * Bundle arguments = new Bundle(); //Map >> Key Value pairs
+ * arguments.putString(LoginFragment.TEXT_KEY, text);
+ * fragment.setArguments(arguments);
+ *
+ * return fragment
+ *
+ * Where Receiving
+ * if (getArgument() != null){
+ * TextView textView = view.findViewById(R.id.blabla);
+ * String receivedText = getArguments().getString(TEXT_KEY);
+ * textView.setText(receivedText);
+ */
