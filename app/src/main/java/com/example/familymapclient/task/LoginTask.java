@@ -8,6 +8,9 @@ import android.widget.Toast;
 
 import com.example.familymapclient.server.ServerProxy;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import Request.LoginRequest;
 import Result.EventsResult;
 import Result.LoginResult;
@@ -41,15 +44,23 @@ public class LoginTask implements Runnable{
         LoginResult result = server.login(loginRequest);
         //I can do below in the data task.
         if (result.isSuccess()){
-            //Then call DataTask with a Handler here. if not put as failure
-
+            //TODO: Check for firstName and lastName value to see if they are not null.
+            Handler uiThreadMessageHandler = new Handler() {
+                @Override
+                public void handleMessage(Message message) {
+                    Bundle bundle = message.getData();
+                    firstName = bundle.getString(FIRST_NAME);
+                    lastName = bundle.getString(LAST_NAME);
+                }
+            };
+            DataTask dataTask = new DataTask(uiThreadMessageHandler, result.getAuthtoken());
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            executor.submit(dataTask);
             isSuccess = true;
         }
         else {
             isSuccess = false;
         }
-        PersonsResult personsResult = server.getPeople(result.getAuthtoken());
-        EventsResult eventsResult = server.getEvents(result.getAuthtoken());
         sendMessage();
     }
 

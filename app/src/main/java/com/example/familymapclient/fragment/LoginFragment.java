@@ -27,11 +27,8 @@ import Result.LoginResult;
 
 
 public class LoginFragment extends Fragment {
-
-    private final static String ID_KEY = "id";
-    private final static String USERNAME_KEY = "username";
-    private final static String AUTH_KEY = "authorized token";
-    private final static String MESSAGE_KEY = "message";
+    private final static String FIRST_NAME = "firstname";
+    private final static String LAST_NAME = "lastname";
     private final static String SUCCESS_KEY = "success";
 
     private LoginViewModel mViewModel;
@@ -114,11 +111,11 @@ public class LoginFragment extends Fragment {
                 @Override
                 public void handleMessage(Message message) {
                     Bundle bundle = message.getData();
-                    //So this receives the data >> and I need to use that data to see what are the value.
-                    //So send the class of LoginResult and base on that toast it.
-                    //Later it calls the Function of switching to the map fragment.
+
                     if (bundle.getBoolean(SUCCESS_KEY)){
-                        Toast.makeText(view.getContext(), (username + " " + password), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(view.getContext(),
+                                (bundle.getString(FIRST_NAME) + " " + bundle.getString(LAST_NAME)),
+                                Toast.LENGTH_SHORT).show();
                     }
                     else {
                         Toast.makeText(view.getContext(), "Login Failed", Toast.LENGTH_SHORT).show();
@@ -130,8 +127,6 @@ public class LoginFragment extends Fragment {
             LoginTask login = new LoginTask(uiThreadMessageHandler, request);
             ExecutorService executor = Executors.newSingleThreadExecutor();
             executor.submit(login);
-
-            //TODO: How to get the data from the Login Task?
         });
         return view;
     }
