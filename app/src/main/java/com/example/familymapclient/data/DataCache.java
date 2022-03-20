@@ -2,13 +2,19 @@ package com.example.familymapclient.data;
 
 import com.example.familymapclient.Settings;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 
 import Model.AuthToken;
 import Model.Event;
 import Model.Person;
+import Result.EventsResult;
+import Result.PersonResult;
+import Result.PersonsResult;
 
 public class DataCache {
     private static DataCache instance;
@@ -23,28 +29,61 @@ public class DataCache {
 
     private DataCache(){}
 
-    AuthToken authToken;
+    private String authToken;
 
-    Map<String, Set<Person>> people;//Person ID and get Person
-    Map<String, Set<Event>> events; //Event ID and get All Events
+    private Person user;
 
-    Map<String, List<Event>> personEvent; //Person ID and get an Event by order
-    Map<String, Person> personByID; //Event ID and Find the Person
+    private Set<Person> userPeople;
+    private Set<Event> userEvents;
+
+    private Map<String, Set<Person>> people;//Person ID and get Person
+    private Map<String, Set<Event>> events; //Event ID and get All Events
+
+    private Map<String, SortedSet<Event>> personEvent; //Person ID and get an Event by order
+    private Map<String, Person> personByID; //Event ID and Find the Person
 
     //For Paternal and Maternal
-    Set<String> paternalAncestors; //Person ID and father side
-    Set<String> maternalAncestors; //Person ID and mother side
-    Settings settings;
+    private Set<String> paternalAncestors; //Person ID and father side
+    private Set<String> maternalAncestors; //Person ID and mother side
+    private Settings settings;
 
-    Person getPersonById(String personID ){
+    private Person getPersonById(String personID ){
         return null;
     }
 
-    Event getEventById(String eventID){
+    private Event getEventById(String eventID){
         return null;
     }
 
-    List<Event> getPersonEvents(String personID){
+    private SortedSet<Event> getPersonEvents(String personID){
         return null;
+    }
+
+    public void setData(String token, PersonsResult people, EventsResult events){
+        authToken = token;
+        setPeopleData(people);
+        setEventsData(events);
+    }
+
+    private void setPeopleData(PersonsResult people) {
+        ArrayList<PersonResult> peopleList = people.getData();
+        userPeople = new HashSet<>();
+        for(PersonResult personResult: peopleList){
+            Person person = new Person(personResult.getPersonID(), personResult.getAssociatedUsername(),
+                    personResult.getFirstName(), personResult.getLastName(), personResult.getGender(),
+                    personResult.getFatherID(), personResult.getMotherID(), personResult.getSpouseID());
+            if (person.getSpouseID() == null){
+                user = person;
+            }
+            userPeople.add(person);
+        }
+    }
+
+    public Person getUser() {
+        return user;
+    }
+
+    private void setEventsData(EventsResult events) {
+
     }
 }

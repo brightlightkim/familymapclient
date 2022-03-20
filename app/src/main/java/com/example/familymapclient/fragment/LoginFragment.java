@@ -89,18 +89,13 @@ public class LoginFragment extends Fragment {
          */
         serverHost.setText("10.37.11.53");
         serverPort.setText("8080");
-        userName.setText("taeyang");
-        userPassword.setText("1234");
+        userName.setText("sheila");
+        userPassword.setText("parker");
 
         loginButton = view.findViewById(R.id.loginButton);
         registerButton = view.findViewById(R.id.registerButton);
 
-        //this is setting the com.example.familymapclient.server with the host and port.
-        server = new ServerProxy();
-
         loginButton.setOnClickListener(v -> {
-            server.setServerHost(serverHost.getText().toString());
-            server.setServerPort(serverPort.getText().toString());
 
             String username = userName.getText().toString();
             String password = userPassword.getText().toString();
@@ -114,7 +109,7 @@ public class LoginFragment extends Fragment {
 
                     if (bundle.getBoolean(SUCCESS_KEY)){
                         Toast.makeText(view.getContext(),
-                                (bundle.getString(FIRST_NAME) + " " + bundle.getString(LAST_NAME)),
+                                bundle.getString(FIRST_NAME) + " " + bundle.getString(LAST_NAME),
                                 Toast.LENGTH_SHORT).show();
                     }
                     else {
@@ -124,7 +119,8 @@ public class LoginFragment extends Fragment {
                 }
             };
 
-            LoginTask login = new LoginTask(uiThreadMessageHandler, request);
+            LoginTask login = new LoginTask(uiThreadMessageHandler, request
+            , serverHost.getText().toString(), serverPort.getText().toString());
             ExecutorService executor = Executors.newSingleThreadExecutor();
             executor.submit(login);
         });

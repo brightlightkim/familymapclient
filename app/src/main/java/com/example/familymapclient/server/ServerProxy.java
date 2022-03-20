@@ -23,9 +23,9 @@ public class ServerProxy {
     private static ServerProxy serverProxy;
     private String serverHost;
     private String serverPort;
-    private Gson gson;
+    private Gson gson = new Gson();
 
-    public static ServerProxy initialize()
+    public synchronized static ServerProxy initialize()
     {
         if (serverProxy == null){
             serverProxy = new ServerProxy();
@@ -48,28 +48,24 @@ public class ServerProxy {
             http.setRequestMethod("POST");
             http.setDoOutput(true);
             http.addRequestProperty("Accept", "application/json");
-            http.connect();//TODO: Question why this causes an error message.
-            //So I set a breakpoint here and in some reasons, it gets error,
-            //and throw my application.. Can you help me out with this please?
-            //Sorry just wait for a second please. my computer is slow.
-            //Can you see this??
+            http.connect();
 
             String requestInfo = gson.toJson(request);
             OutputStream reqBody = http.getOutputStream();
             writeString(requestInfo, reqBody);
             reqBody.close();
-
+            LoginResult result = null;
             if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 InputStream respBody = http.getInputStream();
                 String respData = readString(respBody);
-                System.out.println(respData);
+                result = gson.fromJson(respData, LoginResult.class);
             }
             else {
-                System.out.println("ERROR: " + http.getResponseMessage());
                 InputStream respBody = http.getErrorStream();
                 String respData = readString(respBody);
-                System.out.println(respData);
+                result = gson.fromJson(respData, LoginResult.class);
             }
+            return result;
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -78,14 +74,92 @@ public class ServerProxy {
     }
 
     public RegisterResult register(RegisterRequest request){
+        try {
+            URL url = new URL("http://" + serverHost + ":" + serverPort + "/user/register");
+            HttpURLConnection http = (HttpURLConnection)url.openConnection();
+            http.setRequestMethod("POST");
+            http.setDoOutput(true);
+            http.addRequestProperty("Accept", "application/json");
+            http.connect();
+
+            String requestInfo = gson.toJson(request);
+            OutputStream reqBody = http.getOutputStream();
+            writeString(requestInfo, reqBody);
+            reqBody.close();
+            RegisterResult result = null;
+            if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                InputStream respBody = http.getInputStream();
+                String respData = readString(respBody);
+                result = gson.fromJson(respData, RegisterResult.class);
+            }
+            else {
+                InputStream respBody = http.getErrorStream();
+                String respData = readString(respBody);
+                result = gson.fromJson(respData, RegisterResult.class);
+            }
+            return result;
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
     public PersonsResult getPeople(String authToken){
+        try {
+            URL url = new URL("http://" + serverHost + ":" + serverPort + "/person");
+            HttpURLConnection http = (HttpURLConnection)url.openConnection();
+            http.setRequestMethod("GET");
+            http.setDoOutput(false);
+            http.addRequestProperty("Authorization", authToken);
+            http.addRequestProperty("Accept", "application/json");
+            http.connect();
+
+            PersonsResult result = null;
+            if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                InputStream respBody = http.getInputStream();
+                String respData = readString(respBody);
+                result = gson.fromJson(respData, PersonsResult.class);
+            }
+            else {
+                InputStream respBody = http.getErrorStream();
+                String respData = readString(respBody);
+                result = gson.fromJson(respData, PersonsResult.class);
+            }
+            return result;
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
     public EventsResult getEvents(String authToken) {
+        try {
+            URL url = new URL("http://" + serverHost + ":" + serverPort + "/event");
+            HttpURLConnection http = (HttpURLConnection)url.openConnection();
+            http.setRequestMethod("GET");
+            http.setDoOutput(false);
+            http.addRequestProperty("Authorization", authToken);
+            http.addRequestProperty("Accept", "application/json");
+            http.connect();
+
+            EventsResult result = null;
+            if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                InputStream respBody = http.getInputStream();
+                String respData = readString(respBody);
+                result = gson.fromJson(respData, EventsResult.class);
+            }
+            else {
+                InputStream respBody = http.getErrorStream();
+                String respData = readString(respBody);
+                result = gson.fromJson(respData, EventsResult.class);
+            }
+            return result;
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 

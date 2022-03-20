@@ -16,10 +16,12 @@ import Result.EventsResult;
 import Result.LoginResult;
 import Result.PersonsResult;
 
-public class LoginTask implements Runnable{
+public class LoginTask implements Runnable {
     private final Handler messageHandler;
     private LoginRequest loginRequest;
     private ServerProxy server;
+    private String serverHost;
+    private String serverPort;
     private final static String AUTH_KEY = "authorized token"; //With this call the DataTask Function to grab data
     private final static String SUCCESS_KEY = "success";
     private final static String FIRST_NAME = "firstname";
@@ -30,45 +32,38 @@ public class LoginTask implements Runnable{
     private boolean isSuccess;
 
 
-    public LoginTask(Handler messageHandler, LoginRequest request) {
+    public LoginTask(Handler messageHandler, LoginRequest request, String serverHost, String serverPort) {
         this.messageHandler = messageHandler;
         this.loginRequest = request;
+        server = new ServerProxy();
+        server.setServerHost(serverHost);
+        server.setServerPort(serverPort);
+        this.serverHost = serverHost;
+        this.serverPort = serverPort;
     }
 
     @Override
     public void run() {
-        //Use the com.example.familymapclient.server here. //Server Proxy function here.
-        //Add login Function here
-        server = new ServerProxy();
 
         LoginResult result = server.login(loginRequest);
-        //I can do below in the data task.
-        if (result.isSuccess()){
-            //TODO: Check for firstName and lastName value to see if they are not null.
-            Handler uiThreadMessageHandler = new Handler() {
-                @Override
-                public void handleMessage(Message message) {
-                    Bundle bundle = message.getData();
-                    firstName = bundle.getString(FIRST_NAME);
-                    lastName = bundle.getString(LAST_NAME);
-                }
-            };
-            DataTask dataTask = new DataTask(uiThreadMessageHandler, result.getAuthtoken());
-            ExecutorService executor = Executors.newSingleThreadExecutor();
-            executor.submit(dataTask);
+
+        if (result.isSuccess()) {
+            DataTask dataTask = new DataTask(result.getAuthtoken(), serverHost, serverPort);
+            dataTask.setData();
+            firstName = dataTask.getFirstName();
+            lastName = dataTask.getLastName();
             isSuccess = true;
-        }
-        else {
+        } else {
             isSuccess = false;
         }
         sendMessage();
     }
 
-    private void sendMessage(){
+    private void sendMessage() {
         Message message = Message.obtain();
 
         Bundle messageBundle = new Bundle();
-        if(isSuccess){//When it succeeds send the data.
+        if (isSuccess) {//When it succeeds send the data.
             messageBundle.putString(FIRST_NAME, firstName);
             messageBundle.putString(LAST_NAME, lastName);
         }

@@ -4,47 +4,44 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
+import com.example.familymapclient.data.DataCache;
 import com.example.familymapclient.server.ServerProxy;
 
 import Result.EventsResult;
 import Result.PersonsResult;
 
-public class DataTask implements Runnable {
+public class DataTask {
     private final static String FIRST_NAME = "firstname";
     private final static String LAST_NAME = "lastname";
-    private final Handler messageHandler;
+    //private final Handler messageHandler;
     private final String authToken;
     private ServerProxy server;
+    private DataCache data;
     private String firstName;
     private String lastName;
 
-    public DataTask(Handler messageHandler, String authToken) {
-        this.messageHandler = messageHandler;
+    public DataTask(String authToken, String serverHost, String serverPort){
         this.authToken = authToken;
+        server = new ServerProxy();
+        server.setServerHost(serverHost);
+        server.setServerPort(serverPort);
+        data = DataCache.getInstance();
     }
 
-    @Override
-    public void run() {
-        server = new ServerProxy();
+    public void setData(){
         PersonsResult personsResult = server.getPeople(authToken);
         EventsResult eventsResult = server.getEvents(authToken);
-        //TODO: Now do some data stuff with DataCache.
-        //TODO: In the DataCache, add these as parameters.
-        //TODO: Then parse those data to whatever our setting will be (ex: map, set, list).
-        firstName = "Taeyang";
-        lastName = "Kim";
-        sendMessage();
+        data.setData(authToken, personsResult, eventsResult);
+        firstName = data.getUser().getFirstName();
+        lastName = data.getUser().getLastName();
     }
 
-    private void sendMessage() {
-        Message message = Message.obtain();
-
-        Bundle messageBundle = new Bundle();
-
-        messageBundle.putString(FIRST_NAME, firstName);
-        messageBundle.putString(LAST_NAME, lastName);
-
-        message.setData(messageBundle);
-        messageHandler.sendMessage(message);
+    public String getFirstName(){
+        return firstName;
     }
+
+    public String getLastName(){
+        return lastName;
+    }
+
 }
