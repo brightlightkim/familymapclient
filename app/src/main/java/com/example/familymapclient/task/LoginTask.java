@@ -22,7 +22,6 @@ public class LoginTask implements Runnable {
     private ServerProxy server;
     private String serverHost;
     private String serverPort;
-    private final static String AUTH_KEY = "authorized token"; //With this call the DataTask Function to grab data
     private final static String SUCCESS_KEY = "success";
     private final static String FIRST_NAME = "firstname";
     private final static String LAST_NAME = "lastname";
