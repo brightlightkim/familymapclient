@@ -1,12 +1,12 @@
 package com.example.familymapclient.fragment;
 
-import android.arch.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProvider;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -28,7 +28,6 @@ import java.util.concurrent.Executors;
 
 import Request.LoginRequest;
 import Request.RegisterRequest;
-import Result.LoginResult;
 
 
 public class LoginFragment extends Fragment {
@@ -116,6 +115,13 @@ public class LoginFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        checkLogin();
+        checkRegister();
+    }
+
     private void setEditTextListeners(){
         addEditTextListenerForLogin(serverHost);
         addEditTextListenerForLogin(serverPort);
@@ -189,6 +195,7 @@ public class LoginFragment extends Fragment {
                         Toast.makeText(view.getContext(),
                                 bundle.getString(FIRST_NAME) + " " + bundle.getString(LAST_NAME),
                                 Toast.LENGTH_SHORT).show();
+                        //If it succeeds open the Map Fragment.
                     } else {
                         Toast.makeText(view.getContext(), "Login Failed", Toast.LENGTH_SHORT).show();
                     }

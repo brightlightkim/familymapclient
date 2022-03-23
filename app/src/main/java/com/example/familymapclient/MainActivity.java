@@ -1,9 +1,9 @@
 package com.example.familymapclient;
 
 import android.annotation.SuppressLint;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -54,6 +54,12 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Lis
         fragment.registerListener(this);
         return fragment;
     }
+
+    private Fragment createMapFragment() {
+        MapFragment mapFragment = new MapFragment();
+        return mapFragment;
+    }
+
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
