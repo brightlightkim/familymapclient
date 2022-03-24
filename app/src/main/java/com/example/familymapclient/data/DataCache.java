@@ -1,8 +1,11 @@
 package com.example.familymapclient.data;
 
+import android.graphics.Color;
+
 import com.example.familymapclient.Settings;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -37,8 +40,18 @@ public class DataCache {
     private Set<Person> userPeople;
     private Set<Event> userEvents;
 
-    //Events for different colors
+    //TODO: Events for different colors
     //Let's use the map and add it each time.
+    //When one value is used add it with a key and a color
+    //If it's not in the map then add the new color and the type.
+
+
+
+    private Map<String, Integer> eventTypeColor;
+    private int[] colors;
+    private int colorNum;
+    private static final int MIN_COLOR_NUM = 0;
+    private static final int MAX_COLOR_NUM = 11;
 
     private Map<String, Set<Person>> people;//Person ID and get Person
     private Map<String, Set<Event>> events; //Event ID and get All Events
@@ -65,8 +78,10 @@ public class DataCache {
 
     public void setData(String token, PersonsResult people, EventsResult events){
         authToken = token;
+        eventTypeColor = new HashMap<>();
         setPeopleData(people);
         setEventsData(events);
+        setColors();
     }
 
     private void setPeopleData(PersonsResult people) {
@@ -83,10 +98,6 @@ public class DataCache {
         }
     }
 
-    public Person getUser() {
-        return user;
-    }
-
     private void setEventsData(EventsResult events) {
         ArrayList<EventResult> eventList = events.getData();
         userEvents = new HashSet<>();
@@ -97,5 +108,132 @@ public class DataCache {
                     eventResult.getYear());
             userEvents.add(event);
         }
+    }
+
+    private void setColors(){
+        colorNum = 0;
+        colors = new int[]{Color.BLUE, Color.CYAN, Color.GREEN, Color.MAGENTA,
+                Color.RED, Color.WHITE, Color.YELLOW, Color.GRAY, Color.LTGRAY, Color.DKGRAY,
+                Color.BLACK};
+    }
+
+    public static int getMaxColorNum() {
+        return MAX_COLOR_NUM;
+    }
+
+    public static int getMinColorNum() {
+        return MIN_COLOR_NUM;
+    }
+
+    public Map<String, Integer> getEventTypeColor() {
+        return eventTypeColor;
+    }
+
+    public void setEventTypeColor(Map<String, Integer> eventTypeColor) {
+        this.eventTypeColor = eventTypeColor;
+    }
+
+    public int[] getColors() {
+        return colors;
+    }
+
+    public void setColors(int[] colors) {
+        this.colors = colors;
+    }
+
+    public int getColorNum() {
+        return colorNum;
+    }
+
+    public void setColorNum(int colorNum) {
+        this.colorNum = colorNum;
+    }
+
+    public Person getUser() {
+        return user;
+    }
+
+    public String getAuthToken() {
+        return authToken;
+    }
+
+    public void setAuthToken(String authToken) {
+        this.authToken = authToken;
+    }
+
+    public void setUser(Person user) {
+        this.user = user;
+    }
+
+    public Set<Person> getUserPeople() {
+        return userPeople;
+    }
+
+    public void setUserPeople(Set<Person> userPeople) {
+        this.userPeople = userPeople;
+    }
+
+    public Set<Event> getUserEvents() {
+        return userEvents;
+    }
+
+    public void setUserEvents(Set<Event> userEvents) {
+        this.userEvents = userEvents;
+    }
+
+    public Map<String, Set<Person>> getPeople() {
+        return people;
+    }
+
+    public void setPeople(Map<String, Set<Person>> people) {
+        this.people = people;
+    }
+
+    public Map<String, Set<Event>> getEvents() {
+        return events;
+    }
+
+    public void setEvents(Map<String, Set<Event>> events) {
+        this.events = events;
+    }
+
+    public Map<String, SortedSet<Event>> getPersonEvent() {
+        return personEvent;
+    }
+
+    public void setPersonEvent(Map<String, SortedSet<Event>> personEvent) {
+        this.personEvent = personEvent;
+    }
+
+    public Map<String, Person> getPersonByID() {
+        return personByID;
+    }
+
+    public void setPersonByID(Map<String, Person> personByID) {
+        this.personByID = personByID;
+    }
+
+    public Set<String> getPaternalAncestors() {
+        return paternalAncestors;
+    }
+
+    public void setPaternalAncestors(Set<String> paternalAncestors) {
+        this.paternalAncestors = paternalAncestors;
+    }
+
+    public Set<String> getMaternalAncestors() {
+        return maternalAncestors;
+    }
+
+    public void setMaternalAncestors(Set<String> maternalAncestors) {
+        this.maternalAncestors = maternalAncestors;
+    }
+
+    public Settings getSettings() {
+        return settings;
+    }
+
+    public void setSettings(Settings settings) {
+        this.settings = settings;
     }
 }
