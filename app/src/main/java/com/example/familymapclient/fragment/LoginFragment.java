@@ -1,12 +1,18 @@
 package com.example.familymapclient.fragment;
 
+
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -122,7 +128,7 @@ public class LoginFragment extends Fragment {
         checkRegister();
     }
 
-    private void setEditTextListeners(){
+    private void setEditTextListeners() {
         addEditTextListenerForLogin(serverHost);
         addEditTextListenerForLogin(serverPort);
         addEditTextListenerForLogin(userName);
@@ -134,7 +140,7 @@ public class LoginFragment extends Fragment {
         addRadioButtonListener(female);
     }
 
-    private void addEditTextListenerForLogin(EditText text){
+    private void addEditTextListenerForLogin(EditText text) {
         text.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -154,13 +160,13 @@ public class LoginFragment extends Fragment {
         });
     }
 
-    private void addRadioButtonListener(RadioButton button){
+    private void addRadioButtonListener(RadioButton button) {
         button.setOnClickListener(v -> {
             checkRegister();
         });
     }
 
-    private void addEditTextListenerForRegister(EditText text){
+    private void addEditTextListenerForRegister(EditText text) {
         text.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -179,7 +185,7 @@ public class LoginFragment extends Fragment {
         });
     }
 
-    private void setLoginClickListener(){
+    private void setLoginClickListener() {
 
         loginButton.setOnClickListener(v -> {
             LoginRequest request = new LoginRequest(
@@ -195,7 +201,7 @@ public class LoginFragment extends Fragment {
                         Toast.makeText(view.getContext(),
                                 bundle.getString(FIRST_NAME) + " " + bundle.getString(LAST_NAME),
                                 Toast.LENGTH_SHORT).show();
-                        //If it succeeds open the Map Fragment.
+                        listener.notifyDone();
                     } else {
                         Toast.makeText(view.getContext(), "Login Failed", Toast.LENGTH_SHORT).show();
                     }
@@ -210,7 +216,7 @@ public class LoginFragment extends Fragment {
         });
     }
 
-    private void setRegisterButtonListener(){
+    private void setRegisterButtonListener() {
         registerButton.setOnClickListener(v -> {
 
             RadioGroup radioGroup;
@@ -240,6 +246,7 @@ public class LoginFragment extends Fragment {
                         Toast.makeText(view.getContext(),
                                 bundle.getString(FIRST_NAME) + " " + bundle.getString(LAST_NAME),
                                 Toast.LENGTH_SHORT).show();
+                        listener.notifyDone();
                     } else {
                         Toast.makeText(view.getContext(), "Register Failed", Toast.LENGTH_SHORT).show();
                     }
@@ -251,7 +258,6 @@ public class LoginFragment extends Fragment {
                     , serverHost.getText().toString(), serverPort.getText().toString());
             ExecutorService executor = Executors.newSingleThreadExecutor();
             executor.submit(register);
-
         });
     }
 

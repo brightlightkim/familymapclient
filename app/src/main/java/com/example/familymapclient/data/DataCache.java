@@ -12,6 +12,7 @@ import java.util.SortedSet;
 import Model.AuthToken;
 import Model.Event;
 import Model.Person;
+import Result.EventResult;
 import Result.EventsResult;
 import Result.PersonResult;
 import Result.PersonsResult;
@@ -35,6 +36,9 @@ public class DataCache {
 
     private Set<Person> userPeople;
     private Set<Event> userEvents;
+
+    //Events for different colors
+    //Let's use the map and add it each time.
 
     private Map<String, Set<Person>> people;//Person ID and get Person
     private Map<String, Set<Event>> events; //Event ID and get All Events
@@ -84,6 +88,14 @@ public class DataCache {
     }
 
     private void setEventsData(EventsResult events) {
-
+        ArrayList<EventResult> eventList = events.getData();
+        userEvents = new HashSet<>();
+        for(EventResult eventResult: eventList){
+            Event event = new Event(eventResult.getEventID(), eventResult.getAssociatedUsername(),
+                    eventResult.getPersonID(), eventResult.getLatitude(), eventResult.getLongitude(),
+                    eventResult.getCountry(), eventResult.getCity(), eventResult.getEventType(),
+                    eventResult.getYear());
+            userEvents.add(event);
+        }
     }
 }
