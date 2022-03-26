@@ -9,13 +9,27 @@
         class="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/mapTextView"/>
-    <TextView
-        android:id="@+id/mapTextView"
+        android:layout_above="@id/mapTextViewBinder"/>
+    <RelativeLayout
+        android:id="@+id/mapTextViewBinder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:text="@string/mapFragmentMessage"
         android:layout_alignParentBottom="true"
-        android:textAlignment="center"/>
+        android:textAlignment="center"
+        >
+        <com.joanzapata.iconify.widget.IconButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+        </com.joanzapata.iconify.widget.IconButton>
+        <TextView
+            android:id="@+id/mapTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:text="@string/mapFragmentMessage"
+            android:textAlignment="center"
+            />
+    </RelativeLayout>
+
 </RelativeLayout>

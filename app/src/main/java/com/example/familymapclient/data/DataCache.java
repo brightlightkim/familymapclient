@@ -3,6 +3,7 @@ package com.example.familymapclient.data;
 import android.graphics.Color;
 
 import com.example.familymapclient.Settings;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,11 +48,11 @@ public class DataCache {
 
 
 
-    private Map<String, Integer> eventTypeColor;
-    private int[] colors;
+    private Map<String, Float> eventTypeColor;
+    private float[] colors;
     private int colorNum;
     private static final int MIN_COLOR_NUM = 0;
-    private static final int MAX_COLOR_NUM = 11;
+    private static final int MAX_COLOR_NUM = 10;
 
     private Map<String, Set<Person>> people;//Person ID and get Person
     private Map<String, Set<Event>> events; //Event ID and get All Events
@@ -112,9 +113,16 @@ public class DataCache {
 
     private void setColors(){
         colorNum = 0;
-        colors = new int[]{Color.BLUE, Color.CYAN, Color.GREEN, Color.MAGENTA,
-                Color.RED, Color.WHITE, Color.YELLOW, Color.GRAY, Color.LTGRAY, Color.DKGRAY,
-                Color.BLACK};
+        colors = new float[]{BitmapDescriptorFactory.HUE_CYAN,
+        BitmapDescriptorFactory.HUE_AZURE,
+        BitmapDescriptorFactory.HUE_BLUE,
+        BitmapDescriptorFactory.HUE_GREEN,
+        BitmapDescriptorFactory.HUE_MAGENTA,
+        BitmapDescriptorFactory.HUE_ORANGE,
+        BitmapDescriptorFactory.HUE_RED,
+        BitmapDescriptorFactory.HUE_ROSE,
+        BitmapDescriptorFactory.HUE_VIOLET,
+        BitmapDescriptorFactory.HUE_YELLOW};
     }
 
     public static int getMaxColorNum() {
@@ -125,19 +133,19 @@ public class DataCache {
         return MIN_COLOR_NUM;
     }
 
-    public Map<String, Integer> getEventTypeColor() {
+    public Map<String, Float> getEventTypeColor() {
         return eventTypeColor;
     }
 
-    public void setEventTypeColor(Map<String, Integer> eventTypeColor) {
+    public void setEventTypeColor(Map<String, Float> eventTypeColor) {
         this.eventTypeColor = eventTypeColor;
     }
 
-    public int[] getColors() {
+    public float[] getColors() {
         return colors;
     }
 
-    public void setColors(int[] colors) {
+    public void setColors(float[] colors) {
         this.colors = colors;
     }
 

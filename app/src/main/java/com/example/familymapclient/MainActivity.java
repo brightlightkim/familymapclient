@@ -6,7 +6,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-
+import com.joanzapata.iconify.Iconify;
+import com.joanzapata.iconify.fonts.FontAwesomeModule;
 import com.example.familymapclient.fragment.LoginFragment;
 import com.example.familymapclient.fragment.MapFragment;
 
@@ -34,6 +35,8 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Lis
                 ((LoginFragment) currentFragment).registerListener(this);
             }
         }
+
+        Iconify.with(new FontAwesomeModule()); //Setting the Icon.
         /**
          * For Activity to change to another Activity,
          * We do it by intent.
