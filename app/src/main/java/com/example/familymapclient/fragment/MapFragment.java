@@ -55,6 +55,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 Event event = (Event) marker.getTag();
                 //TODO: Display it in the Map Fragment of the Event Info
 
+
                 //TODO: Draw Lines among 1. Parents 2. Life Cycle 3. Spouse
                 //TODO: Life Cycle: get person's events in order and draw lines
                 //TODO: Draw birth events of fathers and mothers
@@ -112,6 +113,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     }
 
+    private void drawLine
+
     private void setEventsMarkersForFirstLanding(){
         for (Event event: data.getUserEvents()){
             LatLng eventPoint = new LatLng(event.getLatitude(), event.getLongitude());
@@ -132,7 +135,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
             Marker marker = map.addMarker(new MarkerOptions().position(eventPoint).icon(BitmapDescriptorFactory.defaultMarker
                     (color)));
-            assert marker != null;
+
             marker.setTag(event);
 
             listener.onMarkerClick(marker);

@@ -2,16 +2,23 @@ package com.example.familymapclient.data;
 
 import android.graphics.Color;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.example.familymapclient.Settings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 import Model.AuthToken;
 import Model.Event;
@@ -57,8 +64,13 @@ public class DataCache {
     private Map<String, Set<Person>> people;//Person ID and get Person
     private Map<String, Set<Event>> events; //Event ID and get All Events
 
+
     private Map<String, SortedSet<Event>> personEvent; //Person ID and get an Event by order
+    //asdf [birth, baptized, marriage]
+    //addd [birth]
+
     private Map<String, Person> personByID; //Event ID and Find the Person
+    private Map<String, Event> eventById;
 
     //For Paternal and Maternal
     private Set<String> paternalAncestors; //Person ID and father side
@@ -80,6 +92,9 @@ public class DataCache {
     public void setData(String token, PersonsResult people, EventsResult events){
         authToken = token;
         eventTypeColor = new HashMap<>();
+        personByID = new HashMap<>();
+        eventById = new HashMap<>();
+        personEvent = new HashMap<>();
         setPeopleData(people);
         setEventsData(events);
         setColors();
@@ -96,6 +111,7 @@ public class DataCache {
                 user = person;
             }
             userPeople.add(person);
+            personByID.put(person.getPersonID(), person);
         }
     }
 
@@ -107,6 +123,18 @@ public class DataCache {
                     eventResult.getPersonID(), eventResult.getLatitude(), eventResult.getLongitude(),
                     eventResult.getCountry(), eventResult.getCity(), eventResult.getEventType(),
                     eventResult.getYear());
+            if (personEvent.get(event.getPersonID()) == null){
+                SortedSet<Event> eventsByPersonID = new TreeSet<>();
+                eventsByPersonID.add(event);
+                personEvent.put(event.getPersonID(), eventsByPersonID);
+            }
+            else{
+                for (Event listEvent: personEvent.get(event.getPersonID())){
+
+                }
+            }
+
+            eventById.put(event.getEventID(), event);
             userEvents.add(event);
         }
     }
@@ -123,6 +151,14 @@ public class DataCache {
         BitmapDescriptorFactory.HUE_ROSE,
         BitmapDescriptorFactory.HUE_VIOLET,
         BitmapDescriptorFactory.HUE_YELLOW};
+    }
+
+    public Map<String, Event> getEventById() {
+        return eventById;
+    }
+
+    public void setEventById(Map<String, Event> eventById) {
+        this.eventById = eventById;
     }
 
     public static int getMaxColorNum() {
