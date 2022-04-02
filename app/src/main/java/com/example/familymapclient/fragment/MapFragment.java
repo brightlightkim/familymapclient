@@ -98,9 +98,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
         setEventsMarkersForFirstLanding();
 
-        LatLng sydney = new LatLng(-34, 151);
-        map.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        map.animateCamera(CameraUpdateFactory.newLatLng(sydney));
+        Person user = data.getUser();
+        Event userBirthEvent = data.getLifeEventsByPersonID(user.getPersonID()).get(0);
+        LatLng birthEventPlace = new LatLng(userBirthEvent.getLatitude(), userBirthEvent.getLongitude());
+        map.addMarker(new MarkerOptions().position(birthEventPlace).title("UserBirthPlace"));
+        map.animateCamera(CameraUpdateFactory.newLatLng(birthEventPlace));
         map.setOnMarkerClickListener(this);
     }
 
