@@ -53,8 +53,6 @@ public class DataCache {
     //When one value is used add it with a key and a color
     //If it's not in the map then add the new color and the type.
 
-
-
     private Map<String, Float> eventTypeColor;
     private float[] colors;
     private int colorNum;
@@ -66,8 +64,6 @@ public class DataCache {
 
 
     private Map<String, SortedSet<Event>> personEvent; //Person ID and get an Event by order
-    //asdf [birth, baptized, marriage]
-    //addd [birth]
 
     private Map<String, Person> personByID; //Event ID and Find the Person
     private Map<String, Event> eventById;
@@ -77,16 +73,8 @@ public class DataCache {
     private Set<String> maternalAncestors; //Person ID and mother side
     private Settings settings;
 
-    private Person getPersonById(String personID ){
-        return null;
-    }
-
-    private Event getEventById(String eventID){
-        return null;
-    }
-
-    private SortedSet<Event> getPersonEvents(String personID){
-        return null;
+    public Person getPersonByID(String personID){
+        return personByID.get(personID);
     }
 
     public void setData(String token, PersonsResult people, EventsResult events){
@@ -123,16 +111,6 @@ public class DataCache {
                     eventResult.getPersonID(), eventResult.getLatitude(), eventResult.getLongitude(),
                     eventResult.getCountry(), eventResult.getCity(), eventResult.getEventType(),
                     eventResult.getYear());
-            if (personEvent.get(event.getPersonID()) == null){
-                SortedSet<Event> eventsByPersonID = new TreeSet<>();
-                eventsByPersonID.add(event);
-                personEvent.put(event.getPersonID(), eventsByPersonID);
-            }
-            else{
-                for (Event listEvent: personEvent.get(event.getPersonID())){
-
-                }
-            }
 
             eventById.put(event.getEventID(), event);
             userEvents.add(event);
@@ -151,10 +129,6 @@ public class DataCache {
         BitmapDescriptorFactory.HUE_ROSE,
         BitmapDescriptorFactory.HUE_VIOLET,
         BitmapDescriptorFactory.HUE_YELLOW};
-    }
-
-    public Map<String, Event> getEventById() {
-        return eventById;
     }
 
     public void setEventById(Map<String, Event> eventById) {
@@ -247,10 +221,6 @@ public class DataCache {
 
     public void setPersonEvent(Map<String, SortedSet<Event>> personEvent) {
         this.personEvent = personEvent;
-    }
-
-    public Map<String, Person> getPersonByID() {
-        return personByID;
     }
 
     public void setPersonByID(Map<String, Person> personByID) {

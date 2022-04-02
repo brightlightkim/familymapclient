@@ -26,5 +26,6 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="mapFragmentMessage">Click a Marker to see event details</string>
+    <string name="icon_image">icon_image</string>
 
 </resources>

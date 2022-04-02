@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.joanzapata.iconify.IconDrawable;
@@ -26,15 +27,18 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.joanzapata.iconify.widget.IconButton;
 
-import Model.Event;
+import java.util.Locale;
 
-public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapLoadedCallback  {
+import Model.Event;
+import Model.Person;
+
+public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapLoadedCallback, GoogleMap.OnMarkerClickListener  {
     private GoogleMap map;
     private DataCache data;
     private MapViewModel mViewModel;
     private GoogleMap.OnMarkerClickListener listener;
     private TextView textView;
-    private IconButton icon;
+    private ImageView icon;
 
     public static MapFragment newInstance() {
         return new MapFragment();
@@ -49,26 +53,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         SupportMapFragment mapFragment= (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         data = DataCache.getInstance();
-        listener = new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(@NonNull Marker marker) {
-                Event event = (Event) marker.getTag();
-                //TODO: Display it in the Map Fragment of the Event Info
+        icon = view.findViewById(R.id.iconView);
+        textView = view.findViewById(R.id.mapTextView);
 
-
-                //TODO: Draw Lines among 1. Parents 2. Life Cycle 3. Spouse
-                //TODO: Life Cycle: get person's events in order and draw lines
-                //TODO: Draw birth events of fathers and mothers
-                //TODO: Draw a line between the event and the spouse' birth event.
-
-                //TODO: It will be changed according to the Settings events
-                //TODO: Create a setting activity.
-                //TODO: Filters by gender and filters by father or mother side
-
-                //First Thing is to check the setting then do it.
-                return false;
-            }
-        };
         return view;
 
         /**
@@ -100,20 +87,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         LatLng sydney= new LatLng(-34,  151);
         map.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         map.animateCamera(CameraUpdateFactory.newLatLng(sydney));
-
-
+        map.setOnMarkerClickListener(this);
     }
 
     @Override
     public void onMapLoaded() {
 
     }
-
-    private void setMapIcon(IconButton icon){
-
-    }
-
-    private void drawLine
 
     private void setEventsMarkersForFirstLanding(){
         for (Event event: data.getUserEvents()){
@@ -137,16 +117,46 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                     (color)));
 
             marker.setTag(event);
-
-            listener.onMarkerClick(marker);
-            //add onClickEventListener >> Event && Life Journey && get Parents >> connect them.
         }
-
-        map.setOnMarkerClickListener(listener);
     }
 
-    public GoogleMap.OnMarkerClickListener getListener() {
-        return listener;
+    @Override
+    public boolean onMarkerClick(@NonNull Marker marker) {
+        Event selectedEvent = (Event) marker.getTag();
+        Person selectedPerson = data.getPersonByID(selectedEvent.getPersonID());
+        //TODO: Display it in the Map Fragment of the Event Info
+        makeGenderIcon(selectedPerson.getGender());
+        makeEventText(selectedPerson, selectedEvent);
+        //TODO: Draw Lines among 1. Parents 2. Life Cycle 3. Spouse
+        //TODO: Life Cycle: get person's events in order and draw lines
+        //TODO: Draw birth events of fathers and mothers
+        //TODO: Draw a line between the event and the spouse' birth event.
+
+        //TODO: It will be changed according to the Settings events
+        //TODO: Create a setting activity.
+        //TODO: Filters by gender and filters by father or mother side
+
+        //First Thing is to check the setting then do it.
+        return false;
     }
 
+    private void makeGenderIcon(String gender){
+        Drawable genderIcon;
+        if (gender.toUpperCase(Locale.ROOT) == "MALE"){
+            genderIcon = new IconDrawable(getActivity(), FontAwesomeIcons.fa_male).sizeDp(40);
+        } else {
+            genderIcon = new IconDrawable(getActivity(), FontAwesomeIcons.fa_female).sizeDp(40);
+        }
+        icon.setImageDrawable(genderIcon);
+    }
+
+    private void makeEventText(Person person, Event event){
+        StringBuilder text = new StringBuilder();
+        text.append(person.getFirstName()).append(" ").append(person.getLastName());
+        text.append("\n");
+        text.append(event.getEventType()).append(": ").append(event.getCity())
+                .append(" ").append(event.getCountry())
+                .append(" (").append(event.getYear()).append(")");
+        textView.setText(text.toString());
+    }
 }
