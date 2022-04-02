@@ -7,4 +7,7 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="male_icon">#FF3CAFFF</color>
+    <color name="female_icon">#FFFE4B6C</color>
+    <color name="life_event_line">#FFFF8034</color>
 </resources>
