@@ -27,5 +27,11 @@
     <string name="login_failed">"Login failed"</string>
     <string name="mapFragmentMessage">Click a Marker to see event details</string>
     <string name="icon_image">icon_image</string>
+    <string name="first_name">First Name</string>
+    <string name="sample_name">Sample Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="gender_">Gender</string>
+    <string name="life_events">LIFE EVENTS</string>
+    <string name="family">FAMILY</string>
 
 </resources>

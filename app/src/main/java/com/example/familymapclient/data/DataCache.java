@@ -65,10 +65,14 @@ public class DataCache {
     private Map<String, Person> personByID; //Person ID and Find the Person
     private Map<String, Event> eventById; //Event ID and Find the Event
 
+    private Map<String, Person> childByID; //get child by parent's id.
+
     //For Paternal and Maternal
-    private Set<String> paternalAncestors; //Person ID and father side
-    private Set<String> maternalAncestors; //Person ID and mother side
+    private Set<Event> maleEvents; //Person ID and father side
+    private Set<Event> femaleEvents; //Person ID and mother side
     private Settings settings;
+
+    public Person getChildById(String personID) { return childByID.get(personID); }
 
     public Person getPersonByID(String personID) {
         return personByID.get(personID);
@@ -79,7 +83,10 @@ public class DataCache {
         eventTypeColor = new HashMap<>();
         personByID = new HashMap<>();
         eventById = new HashMap<>();
+        childByID = new HashMap<>();
         personEvent = new HashMap<>();
+        maleEvents = new HashSet<>();
+        femaleEvents = new HashSet<>();
         setPeopleData(people);
         setEventsData(events);
         setColors();
@@ -95,6 +102,12 @@ public class DataCache {
             if (person.getSpouseID() == null) {
                 user = person;
             }
+            if (person.getFatherID() != null) {
+                childByID.put(person.getFatherID(), person);
+            }
+            if (person.getMotherID() != null) {
+                childByID.put(person.getMotherID(), person);
+            }
             userPeople.add(person);
             personByID.put(person.getPersonID(), person);
         }
@@ -109,8 +122,18 @@ public class DataCache {
                     eventResult.getCountry(), eventResult.getCity(), eventResult.getEventType(),
                     eventResult.getYear());
             addEventToArrayList(event);
+            setEventByGender(event);
             eventById.put(event.getEventID(), event);
             userEvents.add(event);
+        }
+    }
+
+    private void setEventByGender(Event event){
+        Person person = getPersonByID(event.getPersonID());
+        if (person.getGender().toLowerCase(Locale.ROOT).equals("male")){
+            maleEvents.add(event);
+        } else {
+            femaleEvents.add(event);
         }
     }
 
