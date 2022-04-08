@@ -5,16 +5,20 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.familymapclient.data.DataCache;
 import com.example.familymapclient.fragment.MapFragment;
 import com.example.familymapclient.helperModel.PersonWithRelationship;
+import com.joanzapata.iconify.IconDrawable;
+import com.joanzapata.iconify.fonts.FontAwesomeIcons;
 
 import org.w3c.dom.Text;
 
@@ -24,6 +28,7 @@ import Model.Event;
 import Model.Person;
 
 public class PersonActivity extends AppCompatActivity {
+    private static final String PERSON_ID_KEY = "PERSONID";
     private DataCache data;
     private ArrayList<Event> lifeEvents;
     private ArrayList<PersonWithRelationship> family;
@@ -38,13 +43,23 @@ public class PersonActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_person);
 
-        ExpandableListView expandableListView = findViewById(R.id.expandableListView);
         data = DataCache.getInstance();
-        //TODO: Change the personID from the Intent later
-        String personID = "personID";
+
+        Intent intent = getIntent();
+        String personID = intent.getStringExtra(PERSON_ID_KEY);
         selectedPerson = data.getPersonByID(personID);
+
+        TextView firstNameView = findViewById(R.id.firstNameView);
+        firstNameView.setText(selectedPerson.getFirstName());
+        TextView lastNameView = findViewById(R.id.lastNameView);
+        lastNameView.setText(selectedPerson.getLastName());
+        TextView genderView = findViewById(R.id.genderView);
+        genderView.setText(selectedPerson.getGender());
+
         family = data.getFamilyWithRelationship(selectedPerson);
         lifeEvents = data.getLifeEventsByPersonID(personID);
+
+        ExpandableListView expandableListView = findViewById(R.id.expandableListView);
 
         expandableListView.setAdapter(new ExpandableListAdapter());
     }
@@ -139,6 +154,10 @@ public class PersonActivity extends AppCompatActivity {
 
         private void initializeLifeEventView(View lifeEventView, int childPosition) {
             Event desiredEvent = lifeEvents.get(childPosition);
+
+            ImageView locationIconView = lifeEventView.findViewById(R.id.iconView);
+            makeLocationIcon(locationIconView, desiredEvent.getEventType());
+
             TextView nameOfEventView = lifeEventView.findViewById(R.id.nameOfEvent);
             String eventDetailText = desiredEvent.getEventType() + ": " +
                     desiredEvent.getCity() + ", " + desiredEvent.getCountry();
@@ -150,12 +169,16 @@ public class PersonActivity extends AppCompatActivity {
 
             lifeEventView.setOnClickListener(v -> {
                 openMapFragment();
-                //TODO: Send the event Value
+                //TODO: Send the event Value (Open the Event Activity)
             });
         }
 
         private void initializeFamilyView(View familyView, int childPosition) {
             Person desiredPerson = family.get(childPosition).getPerson();
+
+            ImageView personIconView = familyView.findViewById(R.id.iconView);
+            makeGenderIcon(personIconView, desiredPerson.getGender());
+
             TextView nameOfPersonView = familyView.findViewById(R.id.nameOfPerson);
             String personName = desiredPerson.getFirstName() + " " + desiredPerson.getLastName();
             nameOfPersonView.setText(personName);
@@ -169,12 +192,28 @@ public class PersonActivity extends AppCompatActivity {
             });
         }
 
-
-
         @Override
         public boolean isChildSelectable(int groupPosition, int childPosition) {
             return true;
         }
+    }
+
+    private void makeLocationIcon(ImageView icon, String eventType){
+        Drawable locationIcon;
+        float color = data.getEventTypeColor().get(eventType);
+        int intColor = (int) color;
+        locationIcon = new IconDrawable(this, FontAwesomeIcons.fa_map_marker).color(intColor).sizeDp(40);
+        icon.setImageDrawable(locationIcon);
+    }
+
+    private void makeGenderIcon(ImageView icon, String gender) {
+        Drawable genderIcon;
+        if (gender.equals("MALE")) {
+            genderIcon = new IconDrawable(this, FontAwesomeIcons.fa_male).colorRes(R.color.male_icon).sizeDp(40);
+        } else {
+            genderIcon = new IconDrawable(this, FontAwesomeIcons.fa_female).colorRes(R.color.female_icon).sizeDp(40);
+        }
+        icon.setImageDrawable(genderIcon);
     }
 
     private void openMapFragment(){

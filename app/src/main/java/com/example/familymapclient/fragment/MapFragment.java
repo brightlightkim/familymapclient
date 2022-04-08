@@ -2,6 +2,7 @@ package com.example.familymapclient.fragment;
 
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.example.familymapclient.PersonActivity;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.joanzapata.iconify.IconDrawable;
@@ -43,6 +45,7 @@ import Model.Person;
 public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapLoadedCallback, GoogleMap.OnMarkerClickListener {
     private static final int COLOR_LIGHT_GREEN_ARGB = 0xff81C784;
     private static final int COLOR_LIGHT_ORANGE_ARGB = 0xffF9A825;
+    private static final String PERSON_ID_KEY = "PERSONID";
     private GoogleMap map;
     private DataCache data;
     private MapViewModel mViewModel;
@@ -172,6 +175,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 .append(" ").append(event.getCountry())
                 .append(" (").append(event.getYear()).append(")");
         textView.setText(text.toString());
+        textView.setOnClickListener(v -> {
+            Intent intent = new Intent();
+            intent.putExtra(PERSON_ID_KEY, person.getPersonID());
+            intent.setClass(getActivity(), PersonActivity.class);
+            getActivity().startActivity(intent);
+        });
     }
 
     private void makeLinesBySettings(Person selectedPerson, Event selectedEvent){
