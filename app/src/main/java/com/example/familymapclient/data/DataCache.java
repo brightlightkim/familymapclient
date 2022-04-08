@@ -1,27 +1,16 @@
 package com.example.familymapclient.data;
 
-import android.graphics.Color;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import com.example.familymapclient.Settings;
+import com.example.familymapclient.helperModel.PersonWithRelationship;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
-import Model.AuthToken;
 import Model.Event;
 import Model.Person;
 import Result.EventResult;
@@ -70,7 +59,37 @@ public class DataCache {
     //For Paternal and Maternal
     private Set<Event> maleEvents; //Person ID and father side
     private Set<Event> femaleEvents; //Person ID and mother side
+
     private Settings settings;
+
+    public ArrayList<PersonWithRelationship> getFamilyWithRelationship(Person person){
+        ArrayList<PersonWithRelationship> familyWithRelationship = new ArrayList<>();
+        Person father = getPersonByID(person.getFatherID());
+        if (father!=null){
+            PersonWithRelationship fatherWithRelationship =
+                    new PersonWithRelationship(father, "Father");
+            familyWithRelationship.add(fatherWithRelationship);
+        }
+        Person mother = getPersonByID(person.getMotherID());
+        if (mother!=null){
+            PersonWithRelationship motherWithRelationship =
+                    new PersonWithRelationship(mother, "Mother");
+            familyWithRelationship.add(motherWithRelationship);
+        }
+        Person spouse = getPersonByID(person.getSpouseID());
+        if (spouse!=null){
+            PersonWithRelationship spouseWithRelationship =
+                    new PersonWithRelationship(spouse, "Spouse");
+            familyWithRelationship.add(spouseWithRelationship);
+        }
+        Person child = getChildById(person.getPersonID());
+        if (child!=null){
+            PersonWithRelationship childWithRelationship =
+                    new PersonWithRelationship(child, "Child");
+            familyWithRelationship.add(childWithRelationship);
+        }
+        return familyWithRelationship;
+    }
 
     public Person getChildById(String personID) { return childByID.get(personID); }
 
