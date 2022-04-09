@@ -210,6 +210,30 @@ public class DataCache {
                 BitmapDescriptorFactory.HUE_YELLOW};
     }
 
+    public ArrayList<Person> findPeopleWithText(String text) {
+        ArrayList<Person> peopleWithText = new ArrayList<>();
+        for (Person person : userPeople) {
+            if (person.getFirstName().contains(text) ||
+                    person.getLastName().contains(text)) {
+                peopleWithText.add(person);
+            }
+        }
+        return peopleWithText;
+    }
+
+    public ArrayList<Event> findEventsWithText(String text) {
+        ArrayList<Event> eventsWithText = new ArrayList<>();
+        for (Event event : userEvents) {
+            if (event.getCountry().contains(text) ||
+                    event.getCity().contains(text) ||
+                    event.getEventType().contains(text) ||
+                    String.valueOf(event.getYear()).contains(text)) {
+                eventsWithText.add(event);
+            }
+        }
+        return eventsWithText;
+    }
+
     public ArrayList<Event> getLifeEventsByPersonID(String personID) {
         return personEvent.get(personID);
     }

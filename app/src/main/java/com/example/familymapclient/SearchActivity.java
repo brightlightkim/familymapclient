@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.example.familymapclient.data.DataCache;
@@ -21,6 +22,8 @@ import Model.Event;
 public class SearchActivity extends AppCompatActivity {
     private static final int PERSON_TYPE = 0;
     private static final int EVENT_TYPE = 0;
+    private SearchView searchView;
+    private DataCache data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,13 +33,30 @@ public class SearchActivity extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(SearchActivity.this));
 
-        //TODO: Make a search Function Here and add them to database.
-        //TODO: Maybe setting the SearchBar in the layout and use that part to see if something change
-        //TODO: Use that event listener to list and get the info
-        ArrayList<Person> people = new ArrayList<>();
-        ArrayList<Event> events = new ArrayList<>();
-        SearchViewAdapter adapter = new SearchViewAdapter(people, events);
-        recyclerView.setAdapter(adapter);
+        data = DataCache.getInstance();
+
+        searchView = findViewById(R.id.searchView);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                //do something on text submit
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                ArrayList<Person> people = data.findPeopleWithText(newText);
+                ArrayList<Event> events = data.findEventsWithText(newText);
+                if (people == null && events == null) {
+                    return false;
+                } else {
+                    SearchViewAdapter adapter = new SearchViewAdapter(people, events);
+                    recyclerView.setAdapter(adapter);
+                }
+                return false;
+            }
+        });
     }
 
     private class SearchViewAdapter extends RecyclerView.Adapter<searchViewHolder> {
@@ -50,6 +70,9 @@ public class SearchActivity extends AppCompatActivity {
 
         @Override
         public int getItemViewType(int position) {
+            if (people == null){
+                return EVENT_TYPE;
+            }
             return position < people.size() ? PERSON_TYPE : EVENT_TYPE;
         }
 
@@ -69,7 +92,7 @@ public class SearchActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(@NonNull searchViewHolder holder, int position) {
-            if (position < people.size()) {
+            if (people != null && position < people.size()) {
                 holder.bind(people.get(position));
             } else {
                 holder.bind(events.get(position));
