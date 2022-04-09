@@ -8,7 +8,9 @@ import com.example.familymapclient.data.DataCache;
 import com.example.familymapclient.server.ServerProxy;
 
 import Result.EventsResult;
+import Result.LoginResult;
 import Result.PersonsResult;
+import Result.RegisterResult;
 
 public class DataTask {
     private final static String FIRST_NAME = "firstname";
@@ -28,10 +30,10 @@ public class DataTask {
         data = DataCache.getInstance();
     }
 
-    public void setData(){
+    public void setData(String userPersonID){
         PersonsResult personsResult = server.getPeople(authToken);
         EventsResult eventsResult = server.getEvents(authToken);
-        data.setData(authToken, personsResult, eventsResult);
+        data.setData(userPersonID, personsResult, eventsResult);
         firstName = data.getUser().getFirstName();
         lastName = data.getUser().getLastName();
     }

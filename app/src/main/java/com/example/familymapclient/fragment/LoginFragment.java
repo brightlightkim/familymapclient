@@ -102,10 +102,10 @@ public class LoginFragment extends Fragment {
         serverPort.setText("8080");
         userName.setText("sheila");
         userPassword.setText("parker");
-        firstName.setText("Grace");
-        lastName.setText("Grace");
-        email.setText("k2289@byu.edu");
-        male.toggle();
+        firstName.setText("Sheila");
+        lastName.setText("Parker");
+        email.setText("sheila@parker.com");
+        female.toggle();
 
         setEditTextListeners();
 

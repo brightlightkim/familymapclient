@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentManager;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import com.joanzapata.iconify.fonts.FontAwesomeIcons;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import Model.Event;
 import Model.Person;
@@ -64,9 +66,10 @@ public class PersonActivity extends AppCompatActivity {
         expandableListView.setAdapter(new ExpandableListAdapter());
     }
 
-    private class ExpandableListAdapter extends BaseExpandableListAdapter{
+    private class ExpandableListAdapter extends BaseExpandableListAdapter {
         private static final int LIFE_EVENTS_POSITION = 0;
         private static final int FAMILY_POSITION = 1;
+        private final BuildHelper helper = new BuildHelper();
 
         @Override
         public int getGroupCount() {
@@ -156,16 +159,13 @@ public class PersonActivity extends AppCompatActivity {
             Event desiredEvent = lifeEvents.get(childPosition);
 
             ImageView locationIconView = lifeEventView.findViewById(R.id.iconView);
-            makeLocationIcon(locationIconView, desiredEvent.getEventType());
+            helper.makeLocationIcon(PersonActivity.this, locationIconView, desiredEvent.getEventType());
 
             TextView nameOfEventView = lifeEventView.findViewById(R.id.nameOfEvent);
-            String eventDetailText = desiredEvent.getEventType() + ": " +
-                    desiredEvent.getCity() + ", " + desiredEvent.getCountry();
-            nameOfEventView.setText(eventDetailText);
+            nameOfEventView.setText(helper.eventToString(desiredEvent));
 
             TextView userOfEventView = lifeEventView.findViewById(R.id.userOfEvent);
-            String personNameOfEvent = selectedPerson.getFirstName() + " " + selectedPerson.getLastName();
-            userOfEventView.setText(personNameOfEvent);
+            userOfEventView.setText(helper.personNameToString(selectedPerson));
 
             lifeEventView.setOnClickListener(v -> {
                 openMapFragment();
@@ -177,11 +177,10 @@ public class PersonActivity extends AppCompatActivity {
             Person desiredPerson = family.get(childPosition).getPerson();
 
             ImageView personIconView = familyView.findViewById(R.id.iconView);
-            makeGenderIcon(personIconView, desiredPerson.getGender());
+            helper.makeGenderIcon(PersonActivity.this, personIconView, desiredPerson.getGender());
 
             TextView nameOfPersonView = familyView.findViewById(R.id.nameOfPerson);
-            String personName = desiredPerson.getFirstName() + " " + desiredPerson.getLastName();
-            nameOfPersonView.setText(personName);
+            nameOfPersonView.setText(helper.personNameToString(desiredPerson));
 
             TextView relationshipWithUserView = familyView.findViewById(R.id.relationshipWithUser);
             String relationshipWithUser = family.get(childPosition).getRelationship();
@@ -196,24 +195,6 @@ public class PersonActivity extends AppCompatActivity {
         public boolean isChildSelectable(int groupPosition, int childPosition) {
             return true;
         }
-    }
-
-    private void makeLocationIcon(ImageView icon, String eventType){
-        Drawable locationIcon;
-        float color = data.getEventTypeColor().get(eventType);
-        int intColor = (int) color;
-        locationIcon = new IconDrawable(this, FontAwesomeIcons.fa_map_marker).color(intColor).sizeDp(40);
-        icon.setImageDrawable(locationIcon);
-    }
-
-    private void makeGenderIcon(ImageView icon, String gender) {
-        Drawable genderIcon;
-        if (gender.equals("MALE")) {
-            genderIcon = new IconDrawable(this, FontAwesomeIcons.fa_male).colorRes(R.color.male_icon).sizeDp(40);
-        } else {
-            genderIcon = new IconDrawable(this, FontAwesomeIcons.fa_female).colorRes(R.color.female_icon).sizeDp(40);
-        }
-        icon.setImageDrawable(genderIcon);
     }
 
     private void openMapFragment(){

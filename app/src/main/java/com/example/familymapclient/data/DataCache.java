@@ -13,6 +13,7 @@ import java.util.Set;
 
 import Model.Event;
 import Model.Person;
+import Model.User;
 import Result.EventResult;
 import Result.EventsResult;
 import Result.PersonResult;
@@ -36,6 +37,7 @@ public class DataCache {
     private String authToken;
 
     private Person user;
+    private String userID;
 
     private Set<Person> userPeople;
     private Set<Event> userEvents;
@@ -62,28 +64,28 @@ public class DataCache {
 
     private Settings settings;
 
-    public ArrayList<PersonWithRelationship> getFamilyWithRelationship(Person person){
+    public ArrayList<PersonWithRelationship> getFamilyWithRelationship(Person person) {
         ArrayList<PersonWithRelationship> familyWithRelationship = new ArrayList<>();
         Person father = getPersonByID(person.getFatherID());
-        if (father!=null){
+        if (father != null) {
             PersonWithRelationship fatherWithRelationship =
                     new PersonWithRelationship(father, "Father");
             familyWithRelationship.add(fatherWithRelationship);
         }
         Person mother = getPersonByID(person.getMotherID());
-        if (mother!=null){
+        if (mother != null) {
             PersonWithRelationship motherWithRelationship =
                     new PersonWithRelationship(mother, "Mother");
             familyWithRelationship.add(motherWithRelationship);
         }
         Person spouse = getPersonByID(person.getSpouseID());
-        if (spouse!=null){
+        if (spouse != null) {
             PersonWithRelationship spouseWithRelationship =
                     new PersonWithRelationship(spouse, "Spouse");
             familyWithRelationship.add(spouseWithRelationship);
         }
         Person child = getChildById(person.getPersonID());
-        if (child!=null){
+        if (child != null) {
             PersonWithRelationship childWithRelationship =
                     new PersonWithRelationship(child, "Child");
             familyWithRelationship.add(childWithRelationship);
@@ -91,14 +93,16 @@ public class DataCache {
         return familyWithRelationship;
     }
 
-    public Person getChildById(String personID) { return childByID.get(personID); }
+    public Person getChildById(String personID) {
+        return childByID.get(personID);
+    }
 
     public Person getPersonByID(String personID) {
         return personByID.get(personID);
     }
 
-    public void setData(String token, PersonsResult people, EventsResult events) {
-        authToken = token;
+    public void setData(String userPersonID, PersonsResult people, EventsResult events) {
+        userID = userPersonID;
         eventTypeColor = new HashMap<>();
         personByID = new HashMap<>();
         eventById = new HashMap<>();
@@ -107,6 +111,7 @@ public class DataCache {
         maleEvents = new HashSet<>();
         femaleEvents = new HashSet<>();
         setPeopleData(people);
+        user = getPersonByID(userPersonID);
         setEventsData(events);
         setColors();
     }
@@ -118,9 +123,6 @@ public class DataCache {
             Person person = new Person(personResult.getPersonID(), personResult.getAssociatedUsername(),
                     personResult.getFirstName(), personResult.getLastName(), personResult.getGender(),
                     personResult.getFatherID(), personResult.getMotherID(), personResult.getSpouseID());
-            if (person.getSpouseID() == null) {
-                user = person;
-            }
             if (person.getFatherID() != null) {
                 childByID.put(person.getFatherID(), person);
             }
@@ -147,9 +149,10 @@ public class DataCache {
         }
     }
 
-    private void setEventByGender(Event event){
+    private void setEventByGender(Event event) {
         Person person = getPersonByID(event.getPersonID());
-        if (person.getGender().toLowerCase(Locale.ROOT).equals("male")){
+        if (person.getGender().toLowerCase(Locale.ROOT).equals("male") ||
+                person.getGender().toLowerCase(Locale.ROOT).equals("m")) {
             maleEvents.add(event);
         } else {
             femaleEvents.add(event);
@@ -162,26 +165,27 @@ public class DataCache {
             eventList = new ArrayList<>();
             eventList.add(event);
         } else {
-            if (event.getEventType().equals("BIRTH")) {
+            if (event.getEventType().toLowerCase(Locale.ROOT).equals("birth")) {
                 eventList.add(0, event);
-            } else if (event.getEventType().equals("DEATH")) {
+            } else if (event.getEventType().toLowerCase(Locale.ROOT).equals("death")) {
                 eventList.add(eventList.size(), event);
-            }
-            else{
-                for(int i = 0; i < eventList.size(); i++){
+            } else {
+                for (int i = 0; i < eventList.size(); i++) {
                     Event compareEvent = eventList.get(i);
                     //If it's not birth or death
-                    if (!(compareEvent.getEventType().equals("BIRTH") ||
-                            (compareEvent.getEventType().equals("DEATH")))){
-                        if (compareEvent.getYear() > event.getYear()){
+                    if (!(compareEvent.getEventType().toLowerCase(Locale.ROOT).equals("birth") ||
+                            (compareEvent.getEventType().toLowerCase(Locale.ROOT).equals("death")))) {
+                        if (compareEvent.getYear() > event.getYear()) {
                             //If the year is after, we should insert before.
                             eventList.add(i, event);
-                        } else if (compareEvent.getYear()==event.getYear()){
+                            break;
+                        } else if (compareEvent.getYear() == event.getYear()) {
                             //alphabetically sort this.
                             if (compareEvent.getEventType().toLowerCase(Locale.ROOT).
                                     compareTo(event.getEventType().toLowerCase(Locale.ROOT))
-                            >0){
+                                    > 0) {
                                 eventList.add(i, event);
+                                break;
                             }
                         }
                     }
@@ -206,7 +210,7 @@ public class DataCache {
                 BitmapDescriptorFactory.HUE_YELLOW};
     }
 
-    public ArrayList<Event> getLifeEventsByPersonID(String personID){
+    public ArrayList<Event> getLifeEventsByPersonID(String personID) {
         return personEvent.get(personID);
     }
 

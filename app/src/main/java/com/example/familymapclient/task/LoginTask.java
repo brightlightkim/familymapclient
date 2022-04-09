@@ -48,7 +48,7 @@ public class LoginTask implements Runnable {
 
         if (result.isSuccess()) {
             DataTask dataTask = new DataTask(result.getAuthtoken(), serverHost, serverPort);
-            dataTask.setData();
+            dataTask.setData(result.getPersonID());
             firstName = dataTask.getFirstName();
             lastName = dataTask.getLastName();
             isSuccess = true;

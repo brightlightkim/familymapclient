@@ -159,7 +159,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     private void makeGenderIcon(String gender) {
         Drawable genderIcon;
-        if (gender.equals("MALE")) {
+        if (gender.toLowerCase(Locale.ROOT).equals("male") || gender.equals('m') ) {
             genderIcon = new IconDrawable(getActivity(), FontAwesomeIcons.fa_male).colorRes(R.color.male_icon).sizeDp(40);
         } else {
             genderIcon = new IconDrawable(getActivity(), FontAwesomeIcons.fa_female).colorRes(R.color.female_icon).sizeDp(40);

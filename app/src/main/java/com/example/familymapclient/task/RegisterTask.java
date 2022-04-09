@@ -39,7 +39,7 @@ public class RegisterTask implements Runnable{
         RegisterResult result = server.register(registerRequest);
         if (result.isSuccess()) {
             DataTask dataTask = new DataTask(result.getAuthtoken(), serverHost, serverPort);
-            dataTask.setData();
+            dataTask.setData(result.getPersonID());
             firstName = dataTask.getFirstName();
             lastName = dataTask.getLastName();
             isSuccess = true;
