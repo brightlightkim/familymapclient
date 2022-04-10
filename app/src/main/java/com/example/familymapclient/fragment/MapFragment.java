@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.example.familymapclient.BuildHelper;
 import com.example.familymapclient.PersonActivity;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -57,6 +58,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private Polyline spouseLine;
     private ArrayList<Polyline> fatherSideLine;
     private ArrayList<Polyline> motherSideLine;
+    private BuildHelper helper;
 
     public static MapFragment newInstance() {
         return new MapFragment();
@@ -73,6 +75,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         data = DataCache.getInstance();
         icon = view.findViewById(R.id.iconView);
         textView = view.findViewById(R.id.mapTextView);
+        helper = new BuildHelper();
+
         return view;
 
         /**
@@ -100,13 +104,27 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         map.setOnMapLoadedCallback(this);
 
         setEventsMarkersForFirstLanding();
+        if (getArguments() != null){
+            boolean isEventActivity = getArguments().getBoolean(DataCache.getEventBooleanKey());
+            String selectedEventID = getArguments().getString(DataCache.getEventIdKey());
 
-        Person user = data.getUser();
-        Event userBirthEvent = data.getLifeEventsByPersonID(user.getPersonID()).get(0);
-        LatLng birthEventPlace = new LatLng(userBirthEvent.getLatitude(), userBirthEvent.getLongitude());
-        map.addMarker(new MarkerOptions().position(birthEventPlace).title("UserBirthPlace"));
-        map.animateCamera(CameraUpdateFactory.newLatLng(birthEventPlace));
-        map.setOnMarkerClickListener(this);
+            Event selectedEvent = data.getEventByEventID(selectedEventID);
+            LatLng eventLocation = new LatLng(selectedEvent.getLatitude(), selectedEvent.getLongitude());
+            map.addMarker(new MarkerOptions().position(eventLocation).title(selectedEvent.getEventType()));
+            map.animateCamera(CameraUpdateFactory.newLatLng(eventLocation));
+
+            if (isEventActivity){
+                Person selectedPerson = data.getPersonByID(selectedEvent.getPersonID());
+                helper.makeGenderIcon(getContext(), icon, selectedPerson.getGender());
+                makeEventText(selectedPerson, selectedEvent);
+                makeLinesBySettings(selectedPerson, selectedEvent);
+            } else {
+                helper.makeAndroidIcon(getContext(), icon);
+            }
+            map.setOnMarkerClickListener(this);
+        } else {
+            throw new Error("does not have selected event");
+        }
     }
 
     @Override
@@ -144,7 +162,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         Event selectedEvent = (Event) marker.getTag();
         Person selectedPerson = data.getPersonByID(selectedEvent.getPersonID());
 
-        makeGenderIcon(selectedPerson.getGender());
+        helper.makeGenderIcon(getContext(), icon, selectedPerson.getGender());
         makeEventText(selectedPerson, selectedEvent);
 
         makeLinesBySettings(selectedPerson, selectedEvent);
@@ -153,18 +171,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         //TODO: Create a setting activity.
         //TODO: Filters by gender and filters by father or mother side
 
-        //First Thing is to check the setting then do it.
         return false;
-    }
-
-    private void makeGenderIcon(String gender) {
-        Drawable genderIcon;
-        if (gender.toLowerCase(Locale.ROOT).equals("male") || gender.equals('m') ) {
-            genderIcon = new IconDrawable(getActivity(), FontAwesomeIcons.fa_male).colorRes(R.color.male_icon).sizeDp(40);
-        } else {
-            genderIcon = new IconDrawable(getActivity(), FontAwesomeIcons.fa_female).colorRes(R.color.female_icon).sizeDp(40);
-        }
-        icon.setImageDrawable(genderIcon);
     }
 
     private void makeEventText(Person person, Event event) {
@@ -176,10 +183,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 .append(" (").append(event.getYear()).append(")");
         textView.setText(text.toString());
         textView.setOnClickListener(v -> {
-            Intent intent = new Intent();
-            intent.putExtra(PERSON_ID_KEY, person.getPersonID());
-            intent.setClass(getActivity(), PersonActivity.class);
-            getActivity().startActivity(intent);
+            helper.moveToPersonActivity(getActivity(), PERSON_ID_KEY, person.getPersonID());
         });
     }
 

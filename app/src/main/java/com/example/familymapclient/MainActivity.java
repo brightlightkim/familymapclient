@@ -6,10 +6,14 @@ import androidx.fragment.app.FragmentManager;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+
+import com.example.familymapclient.data.DataCache;
 import com.joanzapata.iconify.Iconify;
 import com.joanzapata.iconify.fonts.FontAwesomeModule;
 import com.example.familymapclient.fragment.LoginFragment;
 import com.example.familymapclient.fragment.MapFragment;
+
+import Model.Event;
 
 public class MainActivity extends AppCompatActivity implements LoginFragment.Listener {
     private final String TAG = "MainActivity";
@@ -73,9 +77,14 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Lis
 
     @Override
     public void notifyDone() {
+        DataCache data = DataCache.getInstance();
         FragmentManager fragmentManager = this.getSupportFragmentManager();
         Fragment fragment = new MapFragment();
-
+        Bundle bundle = new Bundle();
+        String userPersonID = data.getUser().getPersonID();
+        Event userFirstEvent = data.getLifeEventsByPersonID(userPersonID).get(0);
+        bundle.putString(DataCache.getEventIdKey(), userFirstEvent.getEventID());
+        fragment.setArguments(bundle);
         fragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, fragment)
                 .commit();

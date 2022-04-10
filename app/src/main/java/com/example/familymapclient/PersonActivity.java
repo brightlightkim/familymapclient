@@ -31,6 +31,7 @@ import Model.Person;
 
 public class PersonActivity extends AppCompatActivity {
     private static final String PERSON_ID_KEY = "PERSONID";
+    private static final String EVENT_ID_KEY = "EVENTID";
     private DataCache data;
     private ArrayList<Event> lifeEvents;
     private ArrayList<PersonWithRelationship> family;
@@ -168,8 +169,7 @@ public class PersonActivity extends AppCompatActivity {
             userOfEventView.setText(helper.personNameToString(selectedPerson));
 
             lifeEventView.setOnClickListener(v -> {
-                openMapFragment();
-                //TODO: Send the event Value (Open the Event Activity)
+                helper.moveToEventActivity(PersonActivity.this, EVENT_ID_KEY, desiredEvent.getEventID());
             });
         }
 
@@ -187,7 +187,7 @@ public class PersonActivity extends AppCompatActivity {
             relationshipWithUserView.setText(relationshipWithUser);
 
             familyView.setOnClickListener(v -> {
-                //TODO: Make a new Person Activity with the given personID
+                helper.moveToPersonActivity(PersonActivity.this, PERSON_ID_KEY, desiredPerson.getPersonID());
             });
         }
 
@@ -195,14 +195,5 @@ public class PersonActivity extends AppCompatActivity {
         public boolean isChildSelectable(int groupPosition, int childPosition) {
             return true;
         }
-    }
-
-    private void openMapFragment(){
-        FragmentManager fragmentManager = this.getSupportFragmentManager();
-        Fragment fragment = new MapFragment();
-
-        fragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, fragment)
-                .commit();
     }
 }

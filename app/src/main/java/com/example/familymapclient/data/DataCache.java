@@ -20,6 +20,8 @@ import Result.PersonResult;
 import Result.PersonsResult;
 
 public class DataCache {
+    private static final String EVENT_BOOLEAN_KEY = "boolean";
+    private static final String MAP_KEY = "map";
     private static DataCache instance;
 
     public synchronized static DataCache getInstance() {
@@ -47,6 +49,9 @@ public class DataCache {
     private int colorNum;
     private static final int MIN_COLOR_NUM = 0;
     private static final int MAX_COLOR_NUM = 10;
+
+    private static final String PERSON_ID_KEY = "PERSONID";
+    private static final String EVENT_ID_KEY = "EVENTID";
 
     private Map<String, Set<Person>> people;//Person ID and get Person
     private Map<String, Set<Event>> events; //Event ID and get All Events
@@ -99,6 +104,10 @@ public class DataCache {
 
     public Person getPersonByID(String personID) {
         return personByID.get(personID);
+    }
+
+    public Event getEventByEventID(String eventID) {
+        return eventById.get(eventID);
     }
 
     public void setData(String userPersonID, PersonsResult people, EventsResult events) {
@@ -236,6 +245,22 @@ public class DataCache {
 
     public ArrayList<Event> getLifeEventsByPersonID(String personID) {
         return personEvent.get(personID);
+    }
+
+    public static String getPersonIdKey() {
+        return PERSON_ID_KEY;
+    }
+
+    public static String getEventIdKey() {
+        return EVENT_ID_KEY;
+    }
+
+    public static String getEventBooleanKey() {
+        return EVENT_BOOLEAN_KEY;
+    }
+
+    public static String getMapKey(){
+        return MAP_KEY;
     }
 
     public static int getMaxColorNum() {

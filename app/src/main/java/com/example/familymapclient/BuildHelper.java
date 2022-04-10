@@ -1,10 +1,17 @@
 package com.example.familymapclient;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.media.Image;
+import android.os.Bundle;
 import android.widget.ImageView;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+
 import com.example.familymapclient.data.DataCache;
+import com.example.familymapclient.fragment.MapFragment;
 import com.joanzapata.iconify.IconDrawable;
 import com.joanzapata.iconify.fonts.FontAwesomeIcons;
 
@@ -28,6 +35,12 @@ public class BuildHelper {
         return person.getFirstName() + " " + person.getLastName();
     }
 
+    public void makeAndroidIcon(Context context, ImageView icon){
+        Drawable locationIcon;
+        locationIcon = new IconDrawable(context, FontAwesomeIcons.fa_android).colorRes(R.color.purple_500).sizeDp(40);
+        icon.setImageDrawable(locationIcon);
+    }
+
     public void makeLocationIcon(Context context, ImageView icon, String eventType){
         Drawable locationIcon;
         float color = data.getEventTypeColor().get(eventType);
@@ -44,5 +57,20 @@ public class BuildHelper {
             genderIcon = new IconDrawable(context, FontAwesomeIcons.fa_female).colorRes(R.color.female_icon).sizeDp(40);
         }
         icon.setImageDrawable(genderIcon);
+    }
+
+    public void moveToPersonActivity(Context context, String personActivityKey, String personID){
+        Intent intent = new Intent();
+        intent.putExtra(personActivityKey, personID);
+        intent.setClass(context, PersonActivity.class);
+        context.startActivity(intent);
+    }
+
+    public void moveToEventActivity(Context context, String eventActivityKey, String eventID){
+        Intent intent = new Intent();
+        intent.putExtra(eventActivityKey, eventID);
+        intent.putExtra(DataCache.getEventBooleanKey(), true);
+        intent.setClass(context, EventActivity.class);
+        context.startActivity(intent);
     }
 }
