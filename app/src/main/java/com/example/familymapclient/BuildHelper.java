@@ -59,6 +59,18 @@ public class BuildHelper {
         icon.setImageDrawable(genderIcon);
     }
 
+    public void moveToSearchActivity(Context context){
+        Intent intent = new Intent();
+        intent.setClass(context, SearchActivity.class);
+        context.startActivity(intent);
+    }
+
+    public void moveToSettingsActivity(Context context){
+        Intent intent = new Intent();
+        intent.setClass(context, Settings.class);
+        context.startActivity(intent);
+    }
+
     public void moveToPersonActivity(Context context, String personActivityKey, String personID){
         Intent intent = new Intent();
         intent.putExtra(personActivityKey, personID);

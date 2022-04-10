@@ -33,5 +33,8 @@
     <string name="gender_">Gender</string>
     <string name="life_events">LIFE EVENTS</string>
     <string name="family">FAMILY</string>
+    <string name="searchMenu">Search Menu</string>
+    <string name="settings">settings</string>
+    <string name="search_text">Type Your Search</string>
 
 </resources>

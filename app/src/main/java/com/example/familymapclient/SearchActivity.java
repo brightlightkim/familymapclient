@@ -6,8 +6,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -22,7 +25,6 @@ import Model.Event;
 public class SearchActivity extends AppCompatActivity {
     private static final int PERSON_TYPE = 0;
     private static final int EVENT_TYPE = 0;
-    private SearchView searchView;
     private DataCache data;
 
     @Override
@@ -34,29 +36,52 @@ public class SearchActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(SearchActivity.this));
 
         data = DataCache.getInstance();
+        EditText searchText = findViewById(R.id.searchViewText);
 
-        searchView = findViewById(R.id.searchView);
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        searchText.addTextChangedListener(new TextWatcher() {
             @Override
-            public boolean onQueryTextSubmit(String query) {
-                //do something on text submit
-                return false;
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
             }
 
             @Override
-            public boolean onQueryTextChange(String newText) {
-                ArrayList<Person> people = data.findPeopleWithText(newText);
-                ArrayList<Event> events = data.findEventsWithText(newText);
-                if (people == null && events == null) {
-                    return false;
-                } else {
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                ArrayList<Person> people = data.findPeopleWithText(s.toString());
+                ArrayList<Event> events = data.findEventsWithText(s.toString());
+                if (!(people.size() == 0 && events.size() == 0)) {
                     SearchViewAdapter adapter = new SearchViewAdapter(people, events);
                     recyclerView.setAdapter(adapter);
                 }
-                return false;
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
+//
+//        SearchView searchView = findViewById(R.id.searchView);
+//
+//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//            @Override
+//            public boolean onQueryTextSubmit(String query) {
+//                //do something on text submit
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextChange(String newText) {
+//                ArrayList<Person> people = data.findPeopleWithText(newText);
+//                ArrayList<Event> events = data.findEventsWithText(newText);
+//                if (people == null && events == null) {
+//                    return false;
+//                } else {
+//                    SearchViewAdapter adapter = new SearchViewAdapter(people, events);
+//                    recyclerView.setAdapter(adapter);
+//                }
+//                return false;
+//            }
+//        });
     }
 
     private class SearchViewAdapter extends RecyclerView.Adapter<searchViewHolder> {
@@ -70,7 +95,7 @@ public class SearchActivity extends AppCompatActivity {
 
         @Override
         public int getItemViewType(int position) {
-            if (people == null){
+            if (people == null || people.size() == 0){
                 return EVENT_TYPE;
             }
             return position < people.size() ? PERSON_TYPE : EVENT_TYPE;
@@ -92,7 +117,7 @@ public class SearchActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(@NonNull searchViewHolder holder, int position) {
-            if (people != null && position < people.size()) {
+            if (people.size() == 0 && position < people.size()) {
                 holder.bind(people.get(position));
             } else {
                 holder.bind(events.get(position));
@@ -121,6 +146,8 @@ public class SearchActivity extends AppCompatActivity {
         public searchViewHolder(@NonNull View view, int viewType) {
             super(view);
             this.viewType = viewType;
+            person = null;
+            event = null;
 
             itemView.setOnClickListener(this);
             iconView = itemView.findViewById(R.id.iconView);
@@ -135,9 +162,9 @@ public class SearchActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             if (viewType == PERSON_TYPE){
-                //TODO: Open Person Activity with the info
+                helper.moveToPersonActivity(SearchActivity.this, DataCache.getPersonIdKey(), person.getPersonID());
             } else{
-                //TODO: Open Event Activity with the info
+                helper.moveToEventActivity(SearchActivity.this, DataCache.getEventIdKey(), event.getEventID());
             }
         }
 

@@ -2,6 +2,7 @@ package com.example.familymapclient.fragment;
 
 import androidx.lifecycle.ViewModelProvider;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -12,6 +13,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -23,6 +27,7 @@ import com.example.familymapclient.PersonActivity;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.joanzapata.iconify.IconDrawable;
+import com.joanzapata.iconify.Iconify;
 import com.joanzapata.iconify.fonts.FontAwesomeIcons;
 import com.example.familymapclient.R;
 import com.example.familymapclient.data.DataCache;
@@ -34,6 +39,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.joanzapata.iconify.fonts.FontAwesomeModule;
 import com.joanzapata.iconify.widget.IconButton;
 
 import java.util.ArrayList;
@@ -68,6 +74,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        setHasOptionsMenu(true);
+        Iconify.with(new FontAwesomeModule());
+
         View view = inflater.inflate(R.layout.map_fragment, container, false);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
@@ -132,6 +141,52 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.main_menu, menu);
+
+        MenuItem searchMenuItem = menu.findItem(R.id.searchItem);
+        searchMenuItem.setIcon(new IconDrawable(getContext(), FontAwesomeIcons.fa_search)
+                .colorRes(R.color.white).actionBarSize());
+
+        MenuItem settingsMenuItem = menu.findItem(R.id.settings);
+        settingsMenuItem.setIcon(new IconDrawable(getContext(), FontAwesomeIcons.fa_gear)
+                .colorRes(R.color.white).actionBarSize());
+    }
+
+    @SuppressLint("NonConstantResourceId")
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menu) {
+        switch (menu.getItemId()) {
+            case R.id.searchItem:
+                helper.moveToSearchActivity(getContext());
+                return true;
+            case R.id.settings:
+                helper.moveToSettingsActivity(getContext());
+                return true;
+            default:
+                return super.onOptionsItemSelected(menu);
+        }
+    }
+
+    @Override
+    public boolean onMarkerClick(@NonNull Marker marker) {
+        Event selectedEvent = (Event) marker.getTag();
+        Person selectedPerson = data.getPersonByID(selectedEvent.getPersonID());
+
+        helper.makeGenderIcon(getContext(), icon, selectedPerson.getGender());
+        makeEventText(selectedPerson, selectedEvent);
+
+        makeLinesBySettings(selectedPerson, selectedEvent);
+
+        //TODO: It will be changed according to the Settings events
+        //TODO: Create a setting activity.
+        //TODO: Filters by gender and filters by father or mother side
+
+        return false;
+    }
+
     private void setEventsMarkersForFirstLanding() {
         for (Event event : data.getUserEvents()) {
             LatLng eventPoint = new LatLng(event.getLatitude(), event.getLongitude());
@@ -155,23 +210,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
             marker.setTag(event);
         }
-    }
-
-    @Override
-    public boolean onMarkerClick(@NonNull Marker marker) {
-        Event selectedEvent = (Event) marker.getTag();
-        Person selectedPerson = data.getPersonByID(selectedEvent.getPersonID());
-
-        helper.makeGenderIcon(getContext(), icon, selectedPerson.getGender());
-        makeEventText(selectedPerson, selectedEvent);
-
-        makeLinesBySettings(selectedPerson, selectedEvent);
-
-        //TODO: It will be changed according to the Settings events
-        //TODO: Create a setting activity.
-        //TODO: Filters by gender and filters by father or mother side
-
-        return false;
     }
 
     private void makeEventText(Person person, Event event) {

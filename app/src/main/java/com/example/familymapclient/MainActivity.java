@@ -4,11 +4,18 @@ import android.annotation.SuppressLint;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.example.familymapclient.data.DataCache;
+import com.joanzapata.iconify.IconDrawable;
 import com.joanzapata.iconify.Iconify;
+import com.joanzapata.iconify.fonts.FontAwesomeIcons;
 import com.joanzapata.iconify.fonts.FontAwesomeModule;
 import com.example.familymapclient.fragment.LoginFragment;
 import com.example.familymapclient.fragment.MapFragment;
@@ -17,6 +24,7 @@ import Model.Event;
 
 public class MainActivity extends AppCompatActivity implements LoginFragment.Listener {
     private final String TAG = "MainActivity";
+    private final BuildHelper helper = new BuildHelper();
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -60,11 +68,6 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Lis
         LoginFragment fragment = new LoginFragment();
         fragment.registerListener(this);
         return fragment;
-    }
-
-    private Fragment createMapFragment() {
-        MapFragment mapFragment = new MapFragment();
-        return mapFragment;
     }
 
     @Override
