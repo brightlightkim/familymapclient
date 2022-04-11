@@ -24,7 +24,7 @@ import Model.Event;
 
 public class SearchActivity extends AppCompatActivity {
     private static final int PERSON_TYPE = 0;
-    private static final int EVENT_TYPE = 0;
+    private static final int EVENT_TYPE = 1;
     private DataCache data;
 
     @Override
@@ -38,6 +38,10 @@ public class SearchActivity extends AppCompatActivity {
         data = DataCache.getInstance();
         EditText searchText = findViewById(R.id.searchViewText);
 
+        ImageView icon = findViewById(R.id.search_view_icon);
+        BuildHelper helper = new BuildHelper();
+        helper.makeSearchIcon(this, icon);
+
         searchText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -48,10 +52,8 @@ public class SearchActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 ArrayList<Person> people = data.findPeopleWithText(s.toString());
                 ArrayList<Event> events = data.findEventsWithText(s.toString());
-                if (!(people.size() == 0 && events.size() == 0)) {
-                    SearchViewAdapter adapter = new SearchViewAdapter(people, events);
-                    recyclerView.setAdapter(adapter);
-                }
+                SearchViewAdapter adapter = new SearchViewAdapter(people, events);
+                recyclerView.setAdapter(adapter);
             }
 
             @Override
@@ -59,29 +61,6 @@ public class SearchActivity extends AppCompatActivity {
 
             }
         });
-//
-//        SearchView searchView = findViewById(R.id.searchView);
-//
-//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//            @Override
-//            public boolean onQueryTextSubmit(String query) {
-//                //do something on text submit
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean onQueryTextChange(String newText) {
-//                ArrayList<Person> people = data.findPeopleWithText(newText);
-//                ArrayList<Event> events = data.findEventsWithText(newText);
-//                if (people == null && events == null) {
-//                    return false;
-//                } else {
-//                    SearchViewAdapter adapter = new SearchViewAdapter(people, events);
-//                    recyclerView.setAdapter(adapter);
-//                }
-//                return false;
-//            }
-//        });
     }
 
     private class SearchViewAdapter extends RecyclerView.Adapter<searchViewHolder> {
@@ -95,9 +74,6 @@ public class SearchActivity extends AppCompatActivity {
 
         @Override
         public int getItemViewType(int position) {
-            if (people == null || people.size() == 0){
-                return EVENT_TYPE;
-            }
             return position < people.size() ? PERSON_TYPE : EVENT_TYPE;
         }
 
@@ -117,10 +93,10 @@ public class SearchActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(@NonNull searchViewHolder holder, int position) {
-            if (people.size() == 0 && position < people.size()) {
+            if (position < people.size()) {
                 holder.bind(people.get(position));
             } else {
-                holder.bind(events.get(position));
+                holder.bind(events.get(position - people.size()));
             }
         }
 
@@ -135,8 +111,8 @@ public class SearchActivity extends AppCompatActivity {
         private final DataCache data = DataCache.getInstance();
 
         private final int viewType;
-        private ImageView iconView;
-        private TextView upperText;
+        private final ImageView iconView;
+        private final TextView upperText;
         private TextView lowerText;
 
 
@@ -159,15 +135,6 @@ public class SearchActivity extends AppCompatActivity {
             }
         }
 
-        @Override
-        public void onClick(View v) {
-            if (viewType == PERSON_TYPE){
-                helper.moveToPersonActivity(SearchActivity.this, DataCache.getPersonIdKey(), person.getPersonID());
-            } else{
-                helper.moveToEventActivity(SearchActivity.this, DataCache.getEventIdKey(), event.getEventID());
-            }
-        }
-
         public void bind(Person person) {
             this.person = person;
             helper.makeGenderIcon(SearchActivity.this, iconView, person.getGender());
@@ -179,6 +146,15 @@ public class SearchActivity extends AppCompatActivity {
             helper.makeLocationIcon(SearchActivity.this, iconView, event.getEventType());
             upperText.setText(helper.eventToString(event));
             lowerText.setText(helper.personNameToString(data.getPersonByID(event.getPersonID())));
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (viewType == PERSON_TYPE) {
+                helper.moveToPersonActivity(SearchActivity.this, DataCache.getPersonIdKey(), person.getPersonID());
+            } else {
+                helper.moveToEventActivity(SearchActivity.this, DataCache.getEventIdKey(), event.getEventID());
+            }
         }
     }
 }

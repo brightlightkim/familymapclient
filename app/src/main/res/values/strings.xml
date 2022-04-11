@@ -35,6 +35,6 @@
     <string name="family">FAMILY</string>
     <string name="searchMenu">Search Menu</string>
     <string name="settings">settings</string>
-    <string name="search_text">Type Your Search</string>
+    <string name="search_text">Search:</string>
 
 </resources>

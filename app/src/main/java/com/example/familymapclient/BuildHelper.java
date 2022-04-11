@@ -35,6 +35,12 @@ public class BuildHelper {
         return person.getFirstName() + " " + person.getLastName();
     }
 
+    public void makeSearchIcon(Context context, ImageView icon){
+        Drawable locationIcon;
+        locationIcon = new IconDrawable(context, FontAwesomeIcons.fa_search).colorRes(R.color.purple_500).sizeDp(40);
+        icon.setImageDrawable(locationIcon);
+    }
+
     public void makeAndroidIcon(Context context, ImageView icon){
         Drawable locationIcon;
         locationIcon = new IconDrawable(context, FontAwesomeIcons.fa_android).colorRes(R.color.purple_500).sizeDp(40);

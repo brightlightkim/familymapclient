@@ -13,7 +13,6 @@ import java.util.Set;
 
 import Model.Event;
 import Model.Person;
-import Model.User;
 import Result.EventResult;
 import Result.EventsResult;
 import Result.PersonResult;
@@ -222,8 +221,8 @@ public class DataCache {
     public ArrayList<Person> findPeopleWithText(String text) {
         ArrayList<Person> peopleWithText = new ArrayList<>();
         for (Person person : userPeople) {
-            if (person.getFirstName().contains(text) ||
-                    person.getLastName().contains(text)) {
+            if (person.getFirstName().toLowerCase(Locale.ROOT).contains(text.toLowerCase(Locale.ROOT)) ||
+                    person.getLastName().toLowerCase(Locale.ROOT).contains(text.toLowerCase(Locale.ROOT))) {
                 peopleWithText.add(person);
             }
         }
@@ -233,10 +232,10 @@ public class DataCache {
     public ArrayList<Event> findEventsWithText(String text) {
         ArrayList<Event> eventsWithText = new ArrayList<>();
         for (Event event : userEvents) {
-            if (event.getCountry().contains(text) ||
-                    event.getCity().contains(text) ||
-                    event.getEventType().contains(text) ||
-                    String.valueOf(event.getYear()).contains(text)) {
+            if (event.getCountry().toLowerCase(Locale.ROOT).contains(text.toLowerCase(Locale.ROOT)) ||
+                    event.getCity().toLowerCase(Locale.ROOT).contains(text.toLowerCase(Locale.ROOT)) ||
+                    event.getEventType().toLowerCase(Locale.ROOT).contains(text.toLowerCase(Locale.ROOT)) ||
+                    String.valueOf(event.getYear()).contains(text.toLowerCase(Locale.ROOT))) {
                 eventsWithText.add(event);
             }
         }

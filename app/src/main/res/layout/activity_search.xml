@@ -6,16 +6,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <EditText
-        android:id="@+id/searchViewText"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-<!--    <androidx.appcompat.widget.SearchView-->
-<!--        android:id="@+id/searchView"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content">-->
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/search_view_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <EditText
+            android:id="@+id/searchViewText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
 
-<!--    </androidx.appcompat.widget.SearchView>-->
 
     <androidx.recyclerview.widget.RecyclerView
 
