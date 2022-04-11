@@ -3,14 +3,37 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <SwitchPreferenceCompat
-        app:key="notifications"
-        app:title="Enable message notifications"
-        app:summary=""/>
+        app:key="@string/life_story_line_key"
+        app:title="@string/life_story_lines_title"
+        app:summary="@string/life_story_lines_summary"/>
 
+    <SwitchPreferenceCompat
+        app:key="@string/family_tree_lines_key"
+        app:title="@string/family_tree_lines_title"
+        app:summary="@string/family_tree_lines_summary"/>
+    <SwitchPreferenceCompat
+        app:key="@string/spouse_lines_key"
+        app:title="@string/spouse_lines_title"
+        app:summary="@string/spouse_lines_summary"/>
+    <SwitchPreferenceCompat
+        app:key="@string/father_side_key"
+        app:title="@string/father_side_title"
+        app:summary="@string/father_side_summary"/>
+    <SwitchPreferenceCompat
+        app:key="@string/mother_side_key"
+        app:title="@string/mother_side_title"
+        app:summary="@string/mother_side_summary"/>
+    <SwitchPreferenceCompat
+        app:key="@string/filter_male_key"
+        app:title="@string/filter_male_title"
+        app:summary="@string/filter_male_summary"/>
+    <SwitchPreferenceCompat
+        app:key="@string/filter_female_key"
+        app:title="@string/filter_female_title"
+        app:summary="@string/filter_female_summary"/>
     <Preference
-        app:key="feedback"
-        app:summary="Report technical issues or suggest new features"
-        app:title="Send feedback"/>
-    >
+        app:key="@string/logout_key"
+        app:title="@string/logout_title"
+        app:summary="@string/logout_summary"/>
 
 </PreferenceScreen>

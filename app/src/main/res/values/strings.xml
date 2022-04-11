@@ -36,5 +36,29 @@
     <string name="searchMenu">Search Menu</string>
     <string name="settings">settings</string>
     <string name="search_text">Search:</string>
+    <string name="life_story_line_key">lifeStoryLines</string>
+    <string name="life_story_lines_title">Life Story Lines</string>
+    <string name="life_story_lines_summary">SHOW LIFE STORY LINES</string>
+    <string name="family_tree_lines_key">familyTreeLines</string>
+    <string name="family_tree_lines_title">Family Tree Lines</string>
+    <string name="family_tree_lines_summary">SHOW FAMILY TREE LINES</string>
+    <string name="spouse_lines_key">spouseLine</string>
+    <string name="spouse_lines_title">Spouse Lines</string>
+    <string name="spouse_lines_summary">SHOW SPOUSE LINES</string>
+    <string name="father_side_key">fatherSide</string>
+    <string name="father_side_title">Father\'s Side</string>
+    <string name="father_side_summary">FILTER BY FATHER\'S SIDE OF FAMILY</string>
+    <string name="mother_side_key">motherSide</string>
+    <string name="mother_side_title">Mother\'s Side</string>
+    <string name="mother_side_summary">FILTER BY MOTHER\'S SIDE OF FAMILY</string>
+    <string name="filter_male_key">filterMales</string>
+    <string name="filter_male_title">Male Events</string>
+    <string name="filter_male_summary">FILTER EVENTS BASED ON GENDER</string>
+    <string name="filter_female_key">filterFemales</string>
+    <string name="filter_female_title">Female Events</string>
+    <string name="filter_female_summary">FILTER EVENTS BASED ON GENDER</string>
+    <string name="logout_key">logout</string>
+    <string name="logout_title">Logout</string>
+    <string name="logout_summary">RETURN TO LOGIN SCREEN</string>
 
 </resources>

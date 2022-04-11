@@ -1,14 +1,13 @@
 package com.example.familymapclient;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
+import android.preference.PreferenceFragment;
 
-public class Settings extends AppCompatActivity {
+public class Settings extends PreferenceFragment {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings);
+        addPreferencesFromResource(R.xml.preferences);
     }
 }
