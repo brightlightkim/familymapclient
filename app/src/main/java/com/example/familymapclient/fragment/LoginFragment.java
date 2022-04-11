@@ -41,12 +41,6 @@ public class LoginFragment extends Fragment {
     private final static String LAST_NAME = "lastname";
     private final static String SUCCESS_KEY = "success";
 
-    private LoginViewModel mViewModel;
-
-    private final String TAG = "MainActivity";
-    private final String KEY_INDEX = "index";
-
-    private ServerProxy server;
     private EditText serverHost;
     private EditText serverPort;
     private EditText userName;
@@ -277,13 +271,6 @@ public class LoginFragment extends Fragment {
                 firstName.getText().toString().length() != 0 &&
                 lastName.getText().toString().length() != 0 &&
                 (!male.isSelected() || !female.isSelected()));
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        mViewModel = new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(LoginViewModel.class);
-
     }
 
 }

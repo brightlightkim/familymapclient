@@ -3,15 +3,10 @@ package com.example.familymapclient;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
-import android.os.Bundle;
 import android.widget.ImageView;
 
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-
 import com.example.familymapclient.data.DataCache;
-import com.example.familymapclient.fragment.MapFragment;
+import com.example.familymapclient.fragment.SettingsFragment;
 import com.joanzapata.iconify.IconDrawable;
 import com.joanzapata.iconify.fonts.FontAwesomeIcons;
 
@@ -73,7 +68,7 @@ public class BuildHelper {
 
     public void moveToSettingsActivity(Context context){
         Intent intent = new Intent();
-        intent.setClass(context, Settings.class);
+        intent.setClass(context, SettingsActivity.class);
         context.startActivity(intent);
     }
 

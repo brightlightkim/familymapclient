@@ -3,37 +3,43 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <SwitchPreferenceCompat
-        app:key="@string/life_story_line_key"
-        app:title="@string/life_story_lines_title"
-        app:summary="@string/life_story_lines_summary"/>
-
+        android:defaultValue="true"
+        android:key="@string/life_story_line_key"
+        android:summary="@string/life_story_lines_summary"
+        android:title="@string/life_story_lines_title" />
     <SwitchPreferenceCompat
-        app:key="@string/family_tree_lines_key"
-        app:title="@string/family_tree_lines_title"
-        app:summary="@string/family_tree_lines_summary"/>
+        android:defaultValue="true"
+        android:key="@string/family_tree_lines_key"
+        android:summary="@string/family_tree_lines_summary"
+        android:title="@string/family_tree_lines_title" />
     <SwitchPreferenceCompat
-        app:key="@string/spouse_lines_key"
-        app:title="@string/spouse_lines_title"
-        app:summary="@string/spouse_lines_summary"/>
+        android:defaultValue="true"
+        android:key="@string/spouse_lines_key"
+        android:summary="@string/spouse_lines_summary"
+        android:title="@string/spouse_lines_title" />
     <SwitchPreferenceCompat
-        app:key="@string/father_side_key"
-        app:title="@string/father_side_title"
-        app:summary="@string/father_side_summary"/>
+        android:defaultValue="true"
+        android:key="@string/father_side_key"
+        android:summary="@string/father_side_summary"
+        android:title="@string/father_side_title" />
     <SwitchPreferenceCompat
-        app:key="@string/mother_side_key"
-        app:title="@string/mother_side_title"
-        app:summary="@string/mother_side_summary"/>
+        android:defaultValue="true"
+        android:key="@string/mother_side_key"
+        android:summary="@string/mother_side_summary"
+        android:title="@string/mother_side_title" />
     <SwitchPreferenceCompat
-        app:key="@string/filter_male_key"
-        app:title="@string/filter_male_title"
-        app:summary="@string/filter_male_summary"/>
+        android:defaultValue="true"
+        android:key="@string/filter_male_key"
+        android:summary="@string/filter_male_summary"
+        android:title="@string/filter_male_title" />
     <SwitchPreferenceCompat
-        app:key="@string/filter_female_key"
-        app:title="@string/filter_female_title"
-        app:summary="@string/filter_female_summary"/>
+        android:defaultValue="true"
+        android:key="@string/filter_female_key"
+        android:summary="@string/filter_female_summary"
+        android:title="@string/filter_female_title" />
     <Preference
-        app:key="@string/logout_key"
-        app:title="@string/logout_title"
-        app:summary="@string/logout_summary"/>
+        android:key="@string/logout_key"
+        android:summary="@string/logout_summary"
+        android:title="@string/logout_title" />
 
 </PreferenceScreen>

@@ -1,11 +1,7 @@
 package com.example.familymapclient.fragment;
 
-import androidx.lifecycle.ViewModelProvider;
-
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,11 +15,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.familymapclient.BuildHelper;
-import com.example.familymapclient.PersonActivity;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.joanzapata.iconify.IconDrawable;
@@ -40,11 +34,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.joanzapata.iconify.fonts.FontAwesomeModule;
-import com.joanzapata.iconify.widget.IconButton;
 
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Locale;
 
 import Model.Event;
 import Model.Person;
@@ -55,11 +46,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private static final String PERSON_ID_KEY = "PERSONID";
     private GoogleMap map;
     private DataCache data;
-    private MapViewModel mViewModel;
-    private GoogleMap.OnMarkerClickListener listener;
     private TextView textView;
     private ImageView icon;
-    private RelativeLayout textLayout;
     private Polyline lifeEventLine;
     private Polyline spouseLine;
     private ArrayList<Polyline> fatherSideLine;

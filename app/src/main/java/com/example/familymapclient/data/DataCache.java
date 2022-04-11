@@ -1,6 +1,6 @@
 package com.example.familymapclient.data;
 
-import com.example.familymapclient.Settings;
+import com.example.familymapclient.fragment.SettingsFragment;
 import com.example.familymapclient.helperModel.PersonWithRelationship;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 
@@ -65,8 +65,6 @@ public class DataCache {
     //For Paternal and Maternal
     private Set<Event> maleEvents; //Person ID and father side
     private Set<Event> femaleEvents; //Person ID and mother side
-
-    private Settings settings;
 
     public ArrayList<PersonWithRelationship> getFamilyWithRelationship(Person person) {
         ArrayList<PersonWithRelationship> familyWithRelationship = new ArrayList<>();
