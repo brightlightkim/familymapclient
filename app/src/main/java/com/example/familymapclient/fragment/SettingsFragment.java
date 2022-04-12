@@ -1,5 +1,6 @@
 package com.example.familymapclient.fragment;
 
+import android.app.FragmentManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -24,10 +25,14 @@ public class SettingsFragment extends PreferenceFragment {
         addPreferencesFromResource(R.xml.preferences);
         SwitchPreferenceCompat lifeStoryLineOption = (SwitchPreferenceCompat)findPreference(
                 getString(R.string.life_story_line_key));
+        FragmentManager fragmentManager = getFragmentManager();
+        //MapFragment fragment = fragmentManager.findFragmentById(R.id.map);
         lifeStoryLineOption.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(@NonNull Preference preference) {
                 setting.setLifeStoryLineOn(lifeStoryLineOption.isChecked());
+
+                //TODO: Make new markers and lines are required.
                 return false;
             }
         });
@@ -106,4 +111,5 @@ public class SettingsFragment extends PreferenceFragment {
     public void onCreatePreferences(@Nullable Bundle savedInstanceState, String rootKey) {
 
     }
+
 }

@@ -1,16 +1,22 @@
 package com.example.familymapclient.data;
 
+import android.content.SharedPreferences;
+
+import androidx.preference.SwitchPreferenceCompat;
+
+import com.example.familymapclient.R;
+
 public class Setting {
 
     private static Setting instance;
-
-    private boolean isLifeStoryLineOn;
-    private boolean isFamilyTreeLineOn;
-    private boolean isSpouseLineOn;
-    private boolean isFatherSideOn;
-    private boolean isMotherSideOn;
-    private boolean isMaleEventsOn;
-    private boolean isFemaleEventsOn;
+    private static boolean defaultValue;
+    private static boolean isLifeStoryLineOn;
+    private static boolean isFamilyTreeLineOn;
+    private static boolean isSpouseLineOn;
+    private static boolean isFatherSideOn;
+    private static boolean isMotherSideOn;
+    private static boolean isMaleEventsOn;
+    private static boolean isFemaleEventsOn;
 
     private Setting(){
 
@@ -19,6 +25,7 @@ public class Setting {
     public synchronized static Setting getInstance() {
         if (instance == null) {
             instance = new Setting();
+            defaultValue = true;
         }
         return instance;
     }

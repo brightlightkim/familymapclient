@@ -1,12 +1,15 @@
 package com.example.familymapclient.fragment;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,6 +21,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.familymapclient.BuildHelper;
+import com.example.familymapclient.EventActivity;
+import com.example.familymapclient.data.Setting;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.joanzapata.iconify.IconDrawable;
@@ -36,6 +41,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.joanzapata.iconify.fonts.FontAwesomeModule;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import Model.Event;
 import Model.Person;
@@ -43,7 +49,9 @@ import Model.Person;
 public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapLoadedCallback, GoogleMap.OnMarkerClickListener {
     private static final int COLOR_LIGHT_GREEN_ARGB = 0xff81C784;
     private static final int COLOR_LIGHT_ORANGE_ARGB = 0xffF9A825;
+    private static final float DEFAULT_LINE_WIDTH = 8.0f;
     private static final String PERSON_ID_KEY = "PERSONID";
+    private Setting setting;
     private GoogleMap map;
     private DataCache data;
     private TextView textView;
@@ -54,18 +62,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private ArrayList<Polyline> motherSideLine;
     private BuildHelper helper;
 
-    public static MapFragment newInstance() {
-        return new MapFragment();
-    }
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         setHasOptionsMenu(true);
         Iconify.with(new FontAwesomeModule());
-
         View view = inflater.inflate(R.layout.map_fragment, container, false);
+        setting = Setting.getInstance();
 
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -75,23 +79,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         helper = new BuildHelper();
 
         return view;
-
-        /**
-         * For Drawing Icons
-         *
-         * import com.joanzapata.iconify.IconDrawable;
-         * import com.joanzapata.iconify.fonts.FontAwesomeIcons;
-         * …
-         * Drawable genderIcon = new IconDrawable(getActivity(), FontAwesomeIcons.fa_male).
-         * colorRes(R.color.male_icon).sizeDp(40);
-         * genderImageView.setImageDrawable(genderIcon);
-         * The constant values for the necessary icons are:
-         * ● fa_male (male icon)
-         * ● fa_female (female icon)
-         * ● fa_map_marker (event icon)
-         * ● fa_search (search icon)
-         * fa_gear (settings icon)
-         */
     }
 
     @Override
@@ -131,16 +118,21 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.main_menu, menu);
+        boolean isEventActivity = getArguments().getBoolean(DataCache.getEventBooleanKey());
+        if (isEventActivity) {
+            ((EventActivity)getActivity()).getSupportActionBar().setTitle("Family Map: Event");
+        } else {
+            super.onCreateOptionsMenu(menu, inflater);
+            inflater.inflate(R.menu.main_menu, menu);
 
-        MenuItem searchMenuItem = menu.findItem(R.id.searchItem);
-        searchMenuItem.setIcon(new IconDrawable(getContext(), FontAwesomeIcons.fa_search)
-                .colorRes(R.color.white).actionBarSize());
+            MenuItem searchMenuItem = menu.findItem(R.id.searchItem);
+            searchMenuItem.setIcon(new IconDrawable(getContext(), FontAwesomeIcons.fa_search)
+                    .colorRes(R.color.white).actionBarSize());
 
-        MenuItem settingsMenuItem = menu.findItem(R.id.settings);
-        settingsMenuItem.setIcon(new IconDrawable(getContext(), FontAwesomeIcons.fa_gear)
-                .colorRes(R.color.white).actionBarSize());
+            MenuItem settingsMenuItem = menu.findItem(R.id.settings);
+            settingsMenuItem.setIcon(new IconDrawable(getContext(), FontAwesomeIcons.fa_gear)
+                    .colorRes(R.color.white).actionBarSize());
+        }
     }
 
     @SuppressLint("NonConstantResourceId")
@@ -168,10 +160,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
         makeLinesBySettings(selectedPerson, selectedEvent);
 
-        //TODO: It will be changed according to the Settings events
-        //TODO: Create a setting activity.
-        //TODO: Filters by gender and filters by father or mother side
-
         return false;
     }
 
@@ -180,9 +168,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             LatLng eventPoint = new LatLng(event.getLatitude(), event.getLongitude());
             float color;
 
-            if (data.getEventTypeColor().get(event.getEventType()) == null) {
+            if (data.getEventTypeColor().get(event.getEventType().toLowerCase(Locale.ROOT)) == null) {
                 color = data.getColors()[data.getColorNum()];
-                data.getEventTypeColor().put(event.getEventType(), color);
+                data.getEventTypeColor().put(event.getEventType().toLowerCase(Locale.ROOT), color);
 
                 if (data.getColorNum() + 1 == DataCache.getMaxColorNum()) {
                     data.setColorNum(DataCache.getMinColorNum()); //set to minimum number.
@@ -190,7 +178,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 data.setColorNum(data.getColorNum() + 1);
             } // Set until 0-9
             else { //after setting everything
-                color = data.getEventTypeColor().get(event.getEventType());
+                color = data.getEventTypeColor().get(event.getEventType().toLowerCase(Locale.ROOT));
             }
 
             Marker marker = map.addMarker(new MarkerOptions().position(eventPoint).icon(BitmapDescriptorFactory.defaultMarker
@@ -213,28 +201,51 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         });
     }
 
+    //Call this whenever change occur in setting.
     private void makeLinesBySettings(Person selectedPerson, Event selectedEvent){
         clearLines();
-        createFamilyTreeLines(selectedPerson, selectedEvent);
-        createLifeEventsLines(selectedPerson.getPersonID());
-        createSpouseLine(selectedPerson, selectedEvent);
+        setSetting();
+        if (setting.isFamilyTreeLineOn()){
+            createFamilyTreeLines(selectedPerson, selectedEvent);
+        }
+        if (setting.isLifeStoryLineOn()){
+            createLifeEventsLines(selectedPerson.getPersonID());
+        }
+        if (setting.isSpouseLineOn()){
+            createSpouseLine(selectedPerson, selectedEvent);
+        }
+    }
+
+    private void setSetting(){
+        SharedPreferences settingPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        boolean defaultSettingValue = true;
+        setting.setLifeStoryLineOn(settingPreferences.getBoolean(getString(R.string.life_story_line_key), defaultSettingValue));
+        setting.setFamilyTreeLineOn(settingPreferences.getBoolean(getString(R.string.family_tree_lines_key), defaultSettingValue));
+        setting.setFatherSideOn(settingPreferences.getBoolean(getString(R.string.father_side_key), defaultSettingValue));
+        setting.setMotherSideOn(settingPreferences.getBoolean(getString(R.string.mother_side_key), defaultSettingValue));
+        setting.setSpouseLineOn(settingPreferences.getBoolean(getString(R.string.spouse_lines_key), defaultSettingValue));
+        setting.setMaleEventsOn(settingPreferences.getBoolean(getString(R.string.filter_male_key), defaultSettingValue));
+        setting.setFemaleEventsOn(settingPreferences.getBoolean(getString(R.string.filter_female_key), defaultSettingValue));
     }
 
     private void createFamilyTreeLines(Person person, Event event) {
-        //gets a person's father id
-        //TODO: Add settings here to make lines or not.
-        if (person.getFatherID() != null) {
+
+        if (person.getFatherID() != null && setting.isFatherSideOn()) {
             fatherSideLine = new ArrayList<>();
-            createParentSideLine(person, event, "father");
+            createParentSideLine(person, event, "father", DEFAULT_LINE_WIDTH);
         }
         //gets a person's mother id
-        if (person.getMotherID() != null) {
+        if (person.getMotherID() != null && setting.isMotherSideOn()) {
             motherSideLine = new ArrayList<>();
-            createParentSideLine(person, event, "mother");
+            createParentSideLine(person, event, "mother", DEFAULT_LINE_WIDTH);
         }
     }
 
-    private void createParentSideLine(Person person, Event event, String parent) {
+    private void createParentSideLine(Person person, Event event, String parent, float lineWidth) {
+        float shortenedLineWidth = lineWidth - 3f;
+        if (shortenedLineWidth <= 2f){
+            shortenedLineWidth = 2f;
+        }
         //gets a person's father side
         if (person.getFatherID() != null) {
             ArrayList<Event> fatherLifeEvents = data.getLifeEventsByPersonID(person.getFatherID());
@@ -244,13 +255,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 Polyline lineToParent = map.addPolyline(new PolylineOptions()
                         .add(new LatLng(event.getLatitude(), event.getLongitude()))
                         .add(new LatLng(fatherBirthEvent.getLatitude(), fatherBirthEvent.getLongitude()))
-                        .color(Color.BLUE));
+                        .color(Color.BLUE).width(lineWidth));
                 if (parent.equals("father")) {
                     fatherSideLine.add(lineToParent);
                 } else {
                     motherSideLine.add(lineToParent);
                 }
-                createParentSideLine(father, fatherBirthEvent, parent);
+                createParentSideLine(father, fatherBirthEvent, parent, shortenedLineWidth);
             }
         }
         //gets a person's mother side
@@ -262,13 +273,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 Polyline lineToParent = map.addPolyline(new PolylineOptions()
                         .add(new LatLng(event.getLatitude(), event.getLongitude()))
                         .add(new LatLng(motherBirthEvent.getLatitude(), motherBirthEvent.getLongitude()))
-                        .color(Color.BLUE));
+                        .color(Color.BLUE).width(lineWidth));
                 if (parent.equals("father")) {
                     fatherSideLine.add(lineToParent);
                 } else {
                     motherSideLine.add(lineToParent);
                 }
-                createParentSideLine(mother, motherBirthEvent, parent);
+                createParentSideLine(mother, motherBirthEvent, parent, shortenedLineWidth);
             }
         }
     }

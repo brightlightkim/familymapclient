@@ -24,8 +24,6 @@ public class DataCache {
     private static DataCache instance;
 
     public synchronized static DataCache getInstance() {
-        //get another thread works >> not multiple >> don't have
-        //thread  >> UI not responsive
         if (instance == null) {
             instance = new DataCache();
         }
@@ -34,8 +32,6 @@ public class DataCache {
 
     private DataCache() {
     }
-
-    private String authToken;
 
     private Person user;
     private String userID;
@@ -51,9 +47,6 @@ public class DataCache {
 
     private static final String PERSON_ID_KEY = "PERSONID";
     private static final String EVENT_ID_KEY = "EVENTID";
-
-    private Map<String, Set<Person>> people;//Person ID and get Person
-    private Map<String, Set<Event>> events; //Event ID and get All Events
 
     private Map<String, ArrayList<Event>> personEvent; //Person ID and get an Event by order
 
@@ -178,15 +171,21 @@ public class DataCache {
             } else {
                 for (int i = 0; i < eventList.size(); i++) {
                     Event compareEvent = eventList.get(i);
-                    //If it's not birth or death
-                    if (!(compareEvent.getEventType().toLowerCase(Locale.ROOT).equals("birth") ||
-                            (compareEvent.getEventType().toLowerCase(Locale.ROOT).equals("death")))) {
+                    if (compareEvent.getEventType().toLowerCase(Locale.ROOT).equals("birth")) {
+                        if (eventList.size() == 1){
+                            eventList.add(1, event);
+                            break;
+                        }
+                    }
+                    else if (compareEvent.getEventType().toLowerCase(Locale.ROOT).equals("death")){
+                        eventList.add(i, event);
+                        break;
+                    }
+                    else{
                         if (compareEvent.getYear() > event.getYear()) {
-                            //If the year is after, we should insert before.
                             eventList.add(i, event);
                             break;
-                        } else if (compareEvent.getYear() == event.getYear()) {
-                            //alphabetically sort this.
+                        } else if (compareEvent.getYear()==event.getYear()) {
                             if (compareEvent.getEventType().toLowerCase(Locale.ROOT).
                                     compareTo(event.getEventType().toLowerCase(Locale.ROOT))
                                     > 0) {
@@ -194,7 +193,12 @@ public class DataCache {
                                 break;
                             }
                         }
+                        if (i == eventList.size()-1){
+                            eventList.add(eventList.size(), event);
+                            break;
+                        }
                     }
+
                 }
             }
         }
@@ -256,7 +260,7 @@ public class DataCache {
         return EVENT_BOOLEAN_KEY;
     }
 
-    public static String getMapKey(){
+    public static String getMapKey() {
         return MAP_KEY;
     }
 
