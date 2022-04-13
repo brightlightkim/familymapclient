@@ -9,6 +9,7 @@ import static org.junit.Assert.*;
 
 import Request.LoginRequest;
 import Request.RegisterRequest;
+import Result.EventsResult;
 import Result.LoginResult;
 import Result.PersonsResult;
 import Result.RegisterResult;
@@ -50,8 +51,7 @@ public class ServerProxyTest {
 
     private static String userAuthToken;
     private static String wrongAuthToken;
-    private static PersonsResult vaildPeopleResult;
-    private static PersonsResult wrongPeopleResult;
+    private static String notMatchAuthTokenResultMessage;
 
 
     @BeforeClass
@@ -116,6 +116,7 @@ public class ServerProxyTest {
 
         //GET PEOPLE AND EVENTS TEST SET UP
         wrongAuthToken = "I will pass this exam for 100% please";
+        notMatchAuthTokenResultMessage = "Error: No Token that match";
     }
 
     @Test
@@ -185,7 +186,37 @@ public class ServerProxyTest {
     public void Test7_validGetPeople() {
         PersonsResult validPeopleResult = server.getPeople(userAuthToken);
         assertNotNull(validPeopleResult);
+        assertNotNull(validPeopleResult.getData());
         assertNull(validPeopleResult.getMessage());
         assertTrue(validPeopleResult.isSuccess());
+    }
+
+    @Test
+    public void Test8_invalidGetPeople() {
+        PersonsResult invalidPeopleResult = server.getPeople(wrongAuthToken);
+        assertNotNull(invalidPeopleResult);
+        assertNull(invalidPeopleResult.getData());
+        assertNotNull(invalidPeopleResult.getMessage());
+        assertEquals(notMatchAuthTokenResultMessage, invalidPeopleResult.getMessage());
+        assertFalse(invalidPeopleResult.isSuccess());
+    }
+
+    @Test
+    public void Test9_validGetEvents(){
+        EventsResult validEventsResult = server.getEvents(userAuthToken);
+        assertNotNull(validEventsResult);
+        assertNotNull(validEventsResult.getData());
+        assertNull(validEventsResult.getMessage());
+        assertTrue(validEventsResult.isSuccess());
+    }
+
+    @Test
+    public void Test10_invalidGetEvents(){
+        EventsResult invalidEventsResult = server.getEvents(wrongAuthToken);
+        assertNotNull(invalidEventsResult);
+        assertNull(invalidEventsResult.getData());
+        assertNotNull(invalidEventsResult.getMessage());
+        assertEquals(notMatchAuthTokenResultMessage, invalidEventsResult.getMessage());
+        assertFalse(invalidEventsResult.isSuccess());
     }
 }
