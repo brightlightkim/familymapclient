@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
 
+import com.example.familymapclient.data.Setting;
 import com.example.familymapclient.view.EventActivity;
 import com.example.familymapclient.view.PersonActivity;
 import com.example.familymapclient.R;
@@ -21,8 +22,23 @@ import Model.Person;
 
 public class BuildHelper {
     private DataCache data;
+    private Setting setting;
     public BuildHelper() {
         data = DataCache.getInstance();
+        setting = Setting.getInstance();
+    }
+
+    public boolean checkDisplayByGender(String gender){
+        return (isMale(gender) && setting.isMaleEventsOn()) ||
+                (isFemale(gender) && setting.isFemaleEventsOn());
+    }
+
+    public boolean isMale(String gender){
+        return gender.toLowerCase(Locale.ROOT).equals("m") || gender.toLowerCase(Locale.ROOT).equals("male");
+    }
+
+    public boolean isFemale(String gender){
+        return gender.toLowerCase(Locale.ROOT).equals("f") || gender.toLowerCase(Locale.ROOT).equals("female");
     }
 
     public String eventToString(Event event){

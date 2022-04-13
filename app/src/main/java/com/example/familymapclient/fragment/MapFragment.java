@@ -179,7 +179,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     }
 
     private void setEventsMarkersBySetting() {
-        //removeMarkers();
         Set<Event> events = new HashSet<>();
         if (setting.isMaleEventsOn()) {
             events.addAll(data.getMaleEvents());
@@ -215,17 +214,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         }
     }
 
-    private void removeMarkers() {
-        if (mapMarkers != null) {
-            if (mapMarkers.size() != 0) {
-                for (Marker marker : mapMarkers) {
-                    marker.remove();
-                }
-                mapMarkers.clear();
-            }
-        }
-    }
-
     private void makeEventText(Person person, Event event) {
         StringBuilder text = new StringBuilder();
         text.append(person.getFirstName()).append(" ").append(person.getLastName());
@@ -242,14 +230,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     //Call this whenever change occur in setting.
     private void makeLinesBySettings(Person selectedPerson, Event selectedEvent) {
         clearLines();
-        if (setting.isFamilyTreeLineOn()) {
-            createFamilyTreeLines(selectedPerson, selectedEvent);
-        }
-        if (setting.isLifeStoryLineOn()) {
-            createLifeEventsLines(selectedPerson.getPersonID());
-        }
-        if (setting.isSpouseLineOn()) {
-            createSpouseLine(selectedPerson, selectedEvent);
+        if (helper.checkDisplayByGender(selectedPerson.getGender())) {
+            if (setting.isFamilyTreeLineOn()) {
+                createFamilyTreeLines(selectedPerson, selectedEvent);
+            }
+            if (setting.isLifeStoryLineOn()) {
+                createLifeEventsLines(selectedPerson.getPersonID());
+            }
+            if (setting.isSpouseLineOn()) {
+                createSpouseLine(selectedPerson, selectedEvent);
+            }
         }
     }
 
@@ -266,15 +256,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     }
 
     private void createFamilyTreeLines(Person person, Event event) {
-
-        if (person.getFatherID() != null && setting.isFatherSideOn()) {
-            fatherSideLine = new ArrayList<>();
-            createParentSideLine(person, event, "father", DEFAULT_LINE_WIDTH);
+        fatherSideLine = new ArrayList<>();
+        motherSideLine = new ArrayList<>();
+        if (person.getFatherID() != null && setting.isFatherSideOn() && setting.isMaleEventsOn()) {
+            Person father = data.getPersonByID(person.getFatherID());
+            ArrayList<Event> fatherLifeEvents = data.getLifeEventsByPersonID(father.getPersonID());
+            Event fatherBirthEvent = fatherLifeEvents.get(0);
+            makeLineBetweenChildAndParent(event, fatherBirthEvent, "father", DEFAULT_LINE_WIDTH);
+            createParentSideLine(father, fatherBirthEvent, "father", DEFAULT_LINE_WIDTH - 3f);
         }
         //gets a person's mother id
-        if (person.getMotherID() != null && setting.isMotherSideOn()) {
-            motherSideLine = new ArrayList<>();
-            createParentSideLine(person, event, "mother", DEFAULT_LINE_WIDTH);
+        if (person.getMotherID() != null && setting.isMotherSideOn() && setting.isFemaleEventsOn()) {
+            Person mother = data.getPersonByID(person.getMotherID());
+            ArrayList<Event> motherLifeEvents = data.getLifeEventsByPersonID(mother.getPersonID());
+            Event motherBirthEvent = motherLifeEvents.get(0);
+            makeLineBetweenChildAndParent(event, motherBirthEvent, "mother", DEFAULT_LINE_WIDTH);
+            createParentSideLine(mother, motherBirthEvent, "mother", DEFAULT_LINE_WIDTH - 3f);
         }
     }
 
@@ -284,40 +281,36 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             shortenedLineWidth = 2f;
         }
         //gets a person's father side
-        if (person.getFatherID() != null) {
+        if (person.getFatherID() != null && setting.isMaleEventsOn()) {
             ArrayList<Event> fatherLifeEvents = data.getLifeEventsByPersonID(person.getFatherID());
             Person father = data.getPersonByID(person.getFatherID());
             if (father != null && fatherLifeEvents != null) {
                 Event fatherBirthEvent = fatherLifeEvents.get(0);
-                Polyline lineToParent = map.addPolyline(new PolylineOptions()
-                        .add(new LatLng(event.getLatitude(), event.getLongitude()))
-                        .add(new LatLng(fatherBirthEvent.getLatitude(), fatherBirthEvent.getLongitude()))
-                        .color(Color.BLUE).width(lineWidth));
-                if (parent.equals("father")) {
-                    fatherSideLine.add(lineToParent);
-                } else {
-                    motherSideLine.add(lineToParent);
-                }
+                makeLineBetweenChildAndParent(event, fatherBirthEvent, "father", lineWidth);
                 createParentSideLine(father, fatherBirthEvent, parent, shortenedLineWidth);
             }
         }
         //gets a person's mother side
-        if (person.getMotherID() != null) {
+        if (person.getMotherID() != null && setting.isFemaleEventsOn()) {
             ArrayList<Event> motherLifeEvents = data.getLifeEventsByPersonID(person.getMotherID());
             Person mother = data.getPersonByID(person.getMotherID());
             if (mother != null && motherLifeEvents != null) {
                 Event motherBirthEvent = motherLifeEvents.get(0);
-                Polyline lineToParent = map.addPolyline(new PolylineOptions()
-                        .add(new LatLng(event.getLatitude(), event.getLongitude()))
-                        .add(new LatLng(motherBirthEvent.getLatitude(), motherBirthEvent.getLongitude()))
-                        .color(Color.BLUE).width(lineWidth));
-                if (parent.equals("father")) {
-                    fatherSideLine.add(lineToParent);
-                } else {
-                    motherSideLine.add(lineToParent);
-                }
+                makeLineBetweenChildAndParent(event, motherBirthEvent, "mother", lineWidth);
                 createParentSideLine(mother, motherBirthEvent, parent, shortenedLineWidth);
             }
+        }
+    }
+
+    private void makeLineBetweenChildAndParent(Event childEvent, Event parentEvent, String parent, float lineWidth) {
+        Polyline lineToParent = map.addPolyline(new PolylineOptions()
+                .add(new LatLng(childEvent.getLatitude(), childEvent.getLongitude()))
+                .add(new LatLng(parentEvent.getLatitude(), parentEvent.getLongitude()))
+                .color(Color.BLUE).width(lineWidth));
+        if (parent.equals("father")) {
+            fatherSideLine.add(lineToParent);
+        } else {
+            motherSideLine.add(lineToParent);
         }
     }
 
@@ -349,14 +342,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         if (lifeEventLine != null) {
             lifeEventLine.remove();
         }
-        Person person = data.getPersonByID(personID);
-        ArrayList<Event> lifeEventList = null;
-        if (person.getGender().equals("m") && setting.isMaleEventsOn()) {
-            lifeEventList = data.getLifeEventsByPersonID(personID);
-        }
-        if (person.getGender().equals("f") && setting.isFemaleEventsOn()) {
-            lifeEventList = data.getLifeEventsByPersonID(personID);
-        }
+        ArrayList<Event> lifeEventList = data.getLifeEventsByPersonID(personID);
         ArrayList<LatLng> lifePoints = new ArrayList<>();
         if (lifeEventList != null) {
             for (int i = 0; i < lifeEventList.size(); i++) {
@@ -368,9 +354,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     private void createSpouseLine(Person person, Event event) {
         if (person.getSpouseID() != null) {
-            Event spouseBirthEvent = data.getLifeEventsByPersonID(person.getSpouseID()).get(0);
-            spouseLine = map.addPolyline(new PolylineOptions().add(new LatLng(event.getLatitude(), event.getLongitude()))
-                    .add(new LatLng(spouseBirthEvent.getLatitude(), spouseBirthEvent.getLongitude())).color(COLOR_LIGHT_ORANGE_ARGB));
+            Person spouse = data.getPersonByID(person.getSpouseID());
+            if (helper.checkDisplayByGender(spouse.getGender())){
+                Event spouseBirthEvent = data.getLifeEventsByPersonID(person.getSpouseID()).get(0);
+                spouseLine = map.addPolyline(new PolylineOptions().add(new LatLng(event.getLatitude(), event.getLongitude()))
+                        .add(new LatLng(spouseBirthEvent.getLatitude(), spouseBirthEvent.getLongitude())).color(COLOR_LIGHT_ORANGE_ARGB));
+            }
         }
     }
 }

@@ -31,6 +31,7 @@ public class PersonActivity extends AppCompatActivity {
     private ArrayList<PersonWithRelationship> family;
     private Person selectedPerson;
     private Setting setting;
+    private BuildHelper helper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +40,7 @@ public class PersonActivity extends AppCompatActivity {
 
         data = DataCache.getInstance();
         setting = Setting.getInstance();
+        helper = new BuildHelper();
         Intent intent = getIntent();
         String personID = intent.getStringExtra(PERSON_ID_KEY);
         selectedPerson = data.getPersonByID(personID);
@@ -51,7 +53,11 @@ public class PersonActivity extends AppCompatActivity {
         genderView.setText(selectedPerson.getGender());
 
         family = data.getFamilyWithRelationship(selectedPerson);
-        lifeEvents = data.getLifeEventsByPersonID(personID);
+        if (helper.checkDisplayByGender(selectedPerson.getGender())){
+            lifeEvents = data.getLifeEventsByPersonID(personID);
+        } else {
+            lifeEvents = new ArrayList<>();
+        }
 
         ExpandableListView expandableListView = findViewById(R.id.expandableListView);
 
