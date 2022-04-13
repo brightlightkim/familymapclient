@@ -20,7 +20,9 @@ import Result.PersonsResult;
 
 public class DataCache {
     private static final String EVENT_BOOLEAN_KEY = "boolean";
+    private static final String LOGOUT_KEY = "logout";
     private static final String MAP_KEY = "map";
+    private static final String SETTING_KEY = "setting";
     private static DataCache instance;
 
     public synchronized static DataCache getInstance() {
@@ -34,10 +36,12 @@ public class DataCache {
     }
 
     private Person user;
-    private String userID;
+    private Event selectedEvent;
 
     private Set<Person> userPeople;
     private Set<Event> userEvents;
+
+    private Set<Event> selectedEvents;
 
     private Map<String, Float> eventTypeColor;
     private float[] colors;
@@ -101,7 +105,6 @@ public class DataCache {
     }
 
     public void setData(String userPersonID, PersonsResult people, EventsResult events) {
-        userID = userPersonID;
         eventTypeColor = new HashMap<>();
         personByID = new HashMap<>();
         eventById = new HashMap<>();
@@ -109,10 +112,12 @@ public class DataCache {
         personEvent = new HashMap<>();
         maleEvents = new HashSet<>();
         femaleEvents = new HashSet<>();
+        setColors();
         setPeopleData(people);
         user = getPersonByID(userPersonID);
         setEventsData(events);
-        setColors();
+        selectedEvent = personEvent.get(user.getPersonID()).get(0);
+        selectedEvents = userEvents;
     }
 
     private void setPeopleData(PersonsResult people) {
@@ -198,7 +203,6 @@ public class DataCache {
                             break;
                         }
                     }
-
                 }
             }
         }
@@ -233,7 +237,7 @@ public class DataCache {
 
     public ArrayList<Event> findEventsWithText(String text) {
         ArrayList<Event> eventsWithText = new ArrayList<>();
-        for (Event event : userEvents) {
+        for (Event event : selectedEvents) {
             if (event.getCountry().toLowerCase(Locale.ROOT).contains(text.toLowerCase(Locale.ROOT)) ||
                     event.getCity().toLowerCase(Locale.ROOT).contains(text.toLowerCase(Locale.ROOT)) ||
                     event.getEventType().toLowerCase(Locale.ROOT).contains(text.toLowerCase(Locale.ROOT)) ||
@@ -244,8 +248,32 @@ public class DataCache {
         return eventsWithText;
     }
 
+    public static String getSettingKey() {
+        return SETTING_KEY;
+    }
+
     public ArrayList<Event> getLifeEventsByPersonID(String personID) {
         return personEvent.get(personID);
+    }
+
+    public static String getLogoutKey() {
+        return LOGOUT_KEY;
+    }
+
+    public Set<Event> getMaleEvents() {
+        return maleEvents;
+    }
+
+    public Set<Event> getSelectedEvents() {
+        return selectedEvents;
+    }
+
+    public void setSelectedEvents(Set<Event> selectedEvents) {
+        this.selectedEvents = selectedEvents;
+    }
+
+    public Set<Event> getFemaleEvents() {
+        return femaleEvents;
     }
 
     public static String getPersonIdKey() {
@@ -290,6 +318,14 @@ public class DataCache {
 
     public Person getUser() {
         return user;
+    }
+
+    public Event getSelectedEvent() {
+        return selectedEvent;
+    }
+
+    public void setSelectedEvent(Event selectedEvent) {
+        this.selectedEvent = selectedEvent;
     }
 
     public Set<Event> getUserEvents() {

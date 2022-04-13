@@ -1,13 +1,10 @@
-package com.example.familymapclient;
+package com.example.familymapclient.view;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
@@ -15,16 +12,13 @@ import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.familymapclient.R;
 import com.example.familymapclient.data.DataCache;
-import com.example.familymapclient.fragment.MapFragment;
+import com.example.familymapclient.data.Setting;
 import com.example.familymapclient.helperModel.PersonWithRelationship;
-import com.joanzapata.iconify.IconDrawable;
-import com.joanzapata.iconify.fonts.FontAwesomeIcons;
-
-import org.w3c.dom.Text;
+import com.example.familymapclient.util.BuildHelper;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 import Model.Event;
 import Model.Person;
@@ -36,10 +30,7 @@ public class PersonActivity extends AppCompatActivity {
     private ArrayList<Event> lifeEvents;
     private ArrayList<PersonWithRelationship> family;
     private Person selectedPerson;
-    private Person father;
-    private Person mother;
-    private Person spouse;
-    private Person child;
+    private Setting setting;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +38,7 @@ public class PersonActivity extends AppCompatActivity {
         setContentView(R.layout.activity_person);
 
         data = DataCache.getInstance();
-
+        setting = Setting.getInstance();
         Intent intent = getIntent();
         String personID = intent.getStringExtra(PERSON_ID_KEY);
         selectedPerson = data.getPersonByID(personID);
@@ -65,6 +56,16 @@ public class PersonActivity extends AppCompatActivity {
         ExpandableListView expandableListView = findViewById(R.id.expandableListView);
 
         expandableListView.setAdapter(new ExpandableListAdapter());
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }
+        return true;
     }
 
     private class ExpandableListAdapter extends BaseExpandableListAdapter {
@@ -158,37 +159,39 @@ public class PersonActivity extends AppCompatActivity {
 
         private void initializeLifeEventView(View lifeEventView, int childPosition) {
             Event desiredEvent = lifeEvents.get(childPosition);
+            if (desiredEvent!= null) {
+                ImageView locationIconView = lifeEventView.findViewById(R.id.iconView);
+                helper.makeLocationIcon(PersonActivity.this, locationIconView, desiredEvent.getEventType());
 
-            ImageView locationIconView = lifeEventView.findViewById(R.id.iconView);
-            helper.makeLocationIcon(PersonActivity.this, locationIconView, desiredEvent.getEventType());
+                TextView nameOfEventView = lifeEventView.findViewById(R.id.nameOfEvent);
+                nameOfEventView.setText(helper.eventToString(desiredEvent));
 
-            TextView nameOfEventView = lifeEventView.findViewById(R.id.nameOfEvent);
-            nameOfEventView.setText(helper.eventToString(desiredEvent));
+                TextView userOfEventView = lifeEventView.findViewById(R.id.userOfEvent);
+                userOfEventView.setText(helper.personNameToString(selectedPerson));
 
-            TextView userOfEventView = lifeEventView.findViewById(R.id.userOfEvent);
-            userOfEventView.setText(helper.personNameToString(selectedPerson));
-
-            lifeEventView.setOnClickListener(v -> {
-                helper.moveToEventActivity(PersonActivity.this, EVENT_ID_KEY, desiredEvent.getEventID());
-            });
+                lifeEventView.setOnClickListener(v -> {
+                    helper.moveToEventActivity(PersonActivity.this, EVENT_ID_KEY, desiredEvent.getEventID());
+                });
+            }
         }
 
         private void initializeFamilyView(View familyView, int childPosition) {
             Person desiredPerson = family.get(childPosition).getPerson();
+            if (desiredPerson!=null) {
+                ImageView personIconView = familyView.findViewById(R.id.iconView);
+                helper.makeGenderIcon(PersonActivity.this, personIconView, desiredPerson.getGender());
 
-            ImageView personIconView = familyView.findViewById(R.id.iconView);
-            helper.makeGenderIcon(PersonActivity.this, personIconView, desiredPerson.getGender());
+                TextView nameOfPersonView = familyView.findViewById(R.id.nameOfPerson);
+                nameOfPersonView.setText(helper.personNameToString(desiredPerson));
 
-            TextView nameOfPersonView = familyView.findViewById(R.id.nameOfPerson);
-            nameOfPersonView.setText(helper.personNameToString(desiredPerson));
+                TextView relationshipWithUserView = familyView.findViewById(R.id.relationshipWithUser);
+                String relationshipWithUser = family.get(childPosition).getRelationship();
+                relationshipWithUserView.setText(relationshipWithUser);
 
-            TextView relationshipWithUserView = familyView.findViewById(R.id.relationshipWithUser);
-            String relationshipWithUser = family.get(childPosition).getRelationship();
-            relationshipWithUserView.setText(relationshipWithUser);
-
-            familyView.setOnClickListener(v -> {
-                helper.moveToPersonActivity(PersonActivity.this, PERSON_ID_KEY, desiredPerson.getPersonID());
-            });
+                familyView.setOnClickListener(v -> {
+                    helper.moveToPersonActivity(PersonActivity.this, PERSON_ID_KEY, desiredPerson.getPersonID());
+                });
+            }
         }
 
         @Override

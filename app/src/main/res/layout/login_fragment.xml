@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:stretchColumns="3"
-        tools:context=".MainActivity">
+        tools:context=".view.MainActivity">
 
         <TableRow>
             <TextView

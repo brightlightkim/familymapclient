@@ -1,21 +1,17 @@
-package com.example.familymapclient;
+package com.example.familymapclient.view;
 
 import android.annotation.SuppressLint;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 
+import com.example.familymapclient.R;
 import com.example.familymapclient.data.DataCache;
-import com.joanzapata.iconify.IconDrawable;
+import com.example.familymapclient.util.BuildHelper;
 import com.joanzapata.iconify.Iconify;
-import com.joanzapata.iconify.fonts.FontAwesomeIcons;
 import com.joanzapata.iconify.fonts.FontAwesomeModule;
 import com.example.familymapclient.fragment.LoginFragment;
 import com.example.familymapclient.fragment.MapFragment;
@@ -25,6 +21,7 @@ import Model.Event;
 public class MainActivity extends AppCompatActivity implements LoginFragment.Listener {
     private final String TAG = "MainActivity";
     private final BuildHelper helper = new BuildHelper();
+    private boolean isSettingDone;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -35,16 +32,21 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Lis
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment currentFragment =
                 fragmentManager.findFragmentById(R.id.fragment_container);
-
-        if (currentFragment == null) {
-            currentFragment = createLoginFragment();
-            fragmentManager
-                    .beginTransaction()
-                    .add(R.id.fragment_container, currentFragment)
-                    .commit();
+        boolean isLogout = getIntent().getBooleanExtra(DataCache.getLogoutKey(), false);
+        isSettingDone = getIntent().getBooleanExtra(DataCache.getSettingKey(), false);
+        if (isSettingDone){
+            notifyDone();
         } else {
-            if(currentFragment instanceof LoginFragment) {
-                ((LoginFragment) currentFragment).registerListener(this);
+            if (currentFragment == null || isLogout) {
+                currentFragment = createLoginFragment();
+                fragmentManager
+                        .beginTransaction()
+                        .add(R.id.fragment_container, currentFragment)
+                        .commit();
+            } else {
+                if (currentFragment instanceof LoginFragment) {
+                    ((LoginFragment) currentFragment).registerListener(this);
+                }
             }
         }
 
@@ -62,6 +64,10 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Lis
          * Intent intent = getIntent();
          * String receivedText = intent.getString(TEXT_KEY);
          */
+    }
+
+    private void makeMapFragmentBySetting(String eventID){
+
     }
 
     private Fragment createLoginFragment() {
@@ -84,9 +90,9 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Lis
         FragmentManager fragmentManager = this.getSupportFragmentManager();
         Fragment fragment = new MapFragment();
         Bundle bundle = new Bundle();
-        String userPersonID = data.getUser().getPersonID();
-        Event userFirstEvent = data.getLifeEventsByPersonID(userPersonID).get(0);
-        bundle.putString(DataCache.getEventIdKey(), userFirstEvent.getEventID());
+        Event selectedEvent = data.getSelectedEvent();
+        bundle.putString(DataCache.getEventIdKey(), selectedEvent.getEventID());
+        bundle.putBoolean(DataCache.getSettingKey(), isSettingDone);
         fragment.setArguments(bundle);
         fragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, fragment)

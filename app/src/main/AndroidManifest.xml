@@ -22,16 +22,20 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
         <activity
-            android:name=".SettingsActivity"
+            android:name=".view.SettingsActivity"
+            android:parentActivityName=".view.MainActivity"
             android:exported="true" />
         <activity
-            android:name=".EventActivity"
+            android:name=".view.EventActivity"
+            android:parentActivityName=".view.MainActivity"
             android:exported="true" />
         <activity
-            android:name=".SearchActivity"
+            android:name=".view.SearchActivity"
+            android:parentActivityName=".view.MainActivity"
             android:exported="true" />
         <activity
-            android:name=".PersonActivity"
+            android:name=".view.PersonActivity"
+            android:parentActivityName=".view.MainActivity"
             android:exported="true" />
 
         <meta-data
@@ -39,7 +43,7 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".MainActivity"
+            android:name=".view.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

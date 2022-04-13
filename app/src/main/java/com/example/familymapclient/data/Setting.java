@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import androidx.preference.SwitchPreferenceCompat;
 
 import com.example.familymapclient.R;
+import com.example.familymapclient.fragment.MapFragment;
 
 public class Setting {
 

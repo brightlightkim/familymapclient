@@ -1,12 +1,16 @@
-package com.example.familymapclient;
+package com.example.familymapclient.util;
 
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
 
+import com.example.familymapclient.view.EventActivity;
+import com.example.familymapclient.view.PersonActivity;
+import com.example.familymapclient.R;
+import com.example.familymapclient.view.SearchActivity;
+import com.example.familymapclient.view.SettingsActivity;
 import com.example.familymapclient.data.DataCache;
-import com.example.familymapclient.fragment.SettingsFragment;
 import com.joanzapata.iconify.IconDrawable;
 import com.joanzapata.iconify.fonts.FontAwesomeIcons;
 
@@ -44,7 +48,10 @@ public class BuildHelper {
 
     public void makeLocationIcon(Context context, ImageView icon, String eventType){
         Drawable locationIcon;
-        float color = data.getEventTypeColor().get(eventType);
+        float color = 150f;
+        if (data.getEventTypeColor().get(eventType.toLowerCase(Locale.ROOT))!=null){
+            color = data.getEventTypeColor().get(eventType.toLowerCase(Locale.ROOT));
+        }
         int intColor = (int) color;
         locationIcon = new IconDrawable(context, FontAwesomeIcons.fa_map_marker).color(intColor).sizeDp(40);
         icon.setImageDrawable(locationIcon);
@@ -80,6 +87,7 @@ public class BuildHelper {
     }
 
     public void moveToEventActivity(Context context, String eventActivityKey, String eventID){
+        data.setSelectedEvent(data.getEventByEventID(eventID));
         Intent intent = new Intent();
         intent.putExtra(eventActivityKey, eventID);
         intent.putExtra(DataCache.getEventBooleanKey(), true);

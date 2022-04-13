@@ -1,11 +1,16 @@
 package com.example.familymapclient.fragment;
 
 import android.app.FragmentManager;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
+
+import android.app.Fragment;
+
+import androidx.annotation.RequiresApi;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragment;
 
@@ -14,6 +19,8 @@ import androidx.preference.SwitchPreferenceCompat;
 import com.example.familymapclient.R;
 import com.example.familymapclient.data.DataCache;
 import com.example.familymapclient.data.Setting;
+import com.example.familymapclient.view.MainActivity;
+import com.google.android.gms.maps.SupportMapFragment;
 
 public class SettingsFragment extends PreferenceFragment {
     private final DataCache data = DataCache.getInstance();
@@ -25,14 +32,11 @@ public class SettingsFragment extends PreferenceFragment {
         addPreferencesFromResource(R.xml.preferences);
         SwitchPreferenceCompat lifeStoryLineOption = (SwitchPreferenceCompat)findPreference(
                 getString(R.string.life_story_line_key));
-        FragmentManager fragmentManager = getFragmentManager();
-        //MapFragment fragment = fragmentManager.findFragmentById(R.id.map);
+
         lifeStoryLineOption.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(@NonNull Preference preference) {
                 setting.setLifeStoryLineOn(lifeStoryLineOption.isChecked());
-
-                //TODO: Make new markers and lines are required.
                 return false;
             }
         });
@@ -99,9 +103,13 @@ public class SettingsFragment extends PreferenceFragment {
 
         Preference logoutButton = findPreference(getString(R.string.logout_key));
         logoutButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                //Open the Login Fragment again with no inputs
+                Intent intent = new Intent(getContext(), MainActivity.class);
+                intent.putExtra(DataCache.getLogoutKey(), true);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
                 return false;
             }
         });
