@@ -50,24 +50,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Lis
             }
         }
 
-        Iconify.with(new FontAwesomeModule()); //Setting the Icon.
-        /**
-         * For Activity to change to another Activity,
-         * We do it by intent.
-         *
-         * Sending
-         * Intent intent = new Intent(MainActivity.this, ReceivingActivity.class);
-         * intent.putExtra(ReceivingActivity.TEXT_KEY, editText.getText().toString());
-         * startActivity(intent); //It begins the activity.
-         *
-         * Getting
-         * Intent intent = getIntent();
-         * String receivedText = intent.getString(TEXT_KEY);
-         */
-    }
-
-    private void makeMapFragmentBySetting(String eventID){
-
+        Iconify.with(new FontAwesomeModule());
     }
 
     private Fragment createLoginFragment() {

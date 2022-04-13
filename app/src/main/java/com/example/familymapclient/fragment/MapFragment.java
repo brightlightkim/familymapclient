@@ -63,6 +63,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private ArrayList<Polyline> motherSideLine;
     private Set<Marker> mapMarkers;
     private BuildHelper helper;
+    private boolean isSettingDone;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -118,18 +119,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     }
 
-    /**
-     * Logout, Male Events, Female Events, Father side, mother side, up buttons
-     * Filter for the setting applies to the search activity and person activity
-     * search >> not see events that have filtered out
-     * still see the person but not events >> not event >> not event to show up
-     * person >> not see life events >> filter out >> not appear
-     * persons stay there but the events there
-     * algorithm
-     *
-     * @param menu
-     * @param inflater
-     */
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         boolean isEventActivity = getArguments().getBoolean(DataCache.getEventBooleanKey());
