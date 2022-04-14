@@ -59,65 +59,28 @@ public class DataCache {
 
     private Map<String, Person> childByID; //get child by parent's id.
 
-    //For Paternal and Maternal
     private Set<Event> maleEvents; //Person ID and father side
     private Set<Event> femaleEvents; //Person ID and mother side
 
-    public ArrayList<PersonWithRelationship> getFamilyWithRelationship(Person person) {
-        ArrayList<PersonWithRelationship> familyWithRelationship = new ArrayList<>();
-        Person father = getPersonByID(person.getFatherID());
-        if (father != null) {
-            PersonWithRelationship fatherWithRelationship =
-                    new PersonWithRelationship(father, "Father");
-            familyWithRelationship.add(fatherWithRelationship);
-        }
-        Person mother = getPersonByID(person.getMotherID());
-        if (mother != null) {
-            PersonWithRelationship motherWithRelationship =
-                    new PersonWithRelationship(mother, "Mother");
-            familyWithRelationship.add(motherWithRelationship);
-        }
-        Person spouse = getPersonByID(person.getSpouseID());
-        if (spouse != null) {
-            PersonWithRelationship spouseWithRelationship =
-                    new PersonWithRelationship(spouse, "Spouse");
-            familyWithRelationship.add(spouseWithRelationship);
-        }
-        Person child = getChildById(person.getPersonID());
-        if (child != null) {
-            PersonWithRelationship childWithRelationship =
-                    new PersonWithRelationship(child, "Child");
-            familyWithRelationship.add(childWithRelationship);
-        }
-        return familyWithRelationship;
-    }
-
-    public Person getChildById(String personID) {
-        return childByID.get(personID);
-    }
-
-    public Person getPersonByID(String personID) {
-        return personByID.get(personID);
-    }
-
-    public Event getEventByEventID(String eventID) {
-        return eventById.get(eventID);
-    }
 
     public void setData(String userPersonID, PersonsResult people, EventsResult events) {
-        eventTypeColor = new HashMap<>();
-        personByID = new HashMap<>();
-        eventById = new HashMap<>();
-        childByID = new HashMap<>();
-        personEvent = new HashMap<>();
-        maleEvents = new HashSet<>();
-        femaleEvents = new HashSet<>();
-        setColors();
-        setPeopleData(people);
-        user = getPersonByID(userPersonID);
-        setEventsData(events);
-        selectedEvent = personEvent.get(user.getPersonID()).get(0);
-        selectedEvents = userEvents;
+        if (!(userPersonID == null || people == null|| events == null)){
+            if (!(people.getData().size() == 0 || events.getData().size() == 0)){
+                eventTypeColor = new HashMap<>();
+                personByID = new HashMap<>();
+                eventById = new HashMap<>();
+                childByID = new HashMap<>();
+                personEvent = new HashMap<>();
+                maleEvents = new HashSet<>();
+                femaleEvents = new HashSet<>();
+                setColors();
+                setPeopleData(people);
+                user = getPersonByID(userPersonID);
+                setEventsData(events);
+                selectedEvent = personEvent.get(user.getPersonID()).get(0);
+                selectedEvents = userEvents;
+            }
+        }
     }
 
     private void setPeopleData(PersonsResult people) {
@@ -177,20 +140,18 @@ public class DataCache {
                 for (int i = 0; i < eventList.size(); i++) {
                     Event compareEvent = eventList.get(i);
                     if (compareEvent.getEventType().toLowerCase(Locale.ROOT).equals("birth")) {
-                        if (eventList.size() == 1){
+                        if (eventList.size() == 1) {
                             eventList.add(1, event);
                             break;
                         }
-                    }
-                    else if (compareEvent.getEventType().toLowerCase(Locale.ROOT).equals("death")){
+                    } else if (compareEvent.getEventType().toLowerCase(Locale.ROOT).equals("death")) {
                         eventList.add(i, event);
                         break;
-                    }
-                    else{
+                    } else {
                         if (compareEvent.getYear() > event.getYear()) {
                             eventList.add(i, event);
                             break;
-                        } else if (compareEvent.getYear()==event.getYear()) {
+                        } else if (compareEvent.getYear() == event.getYear()) {
                             if (compareEvent.getEventType().toLowerCase(Locale.ROOT).
                                     compareTo(event.getEventType().toLowerCase(Locale.ROOT))
                                     > 0) {
@@ -198,7 +159,7 @@ public class DataCache {
                                 break;
                             }
                         }
-                        if (i == eventList.size()-1){
+                        if (i == eventList.size() - 1) {
                             eventList.add(eventList.size(), event);
                             break;
                         }
@@ -206,7 +167,6 @@ public class DataCache {
                 }
             }
         }
-        //finally replace it with a new order.
         personEvent.put(event.getPersonID(), eventList);
     }
 
@@ -248,6 +208,47 @@ public class DataCache {
         return eventsWithText;
     }
 
+    public ArrayList<PersonWithRelationship> getFamilyWithRelationship(Person person) {
+        ArrayList<PersonWithRelationship> familyWithRelationship = new ArrayList<>();
+        Person father = getPersonByID(person.getFatherID());
+        if (father != null) {
+            PersonWithRelationship fatherWithRelationship =
+                    new PersonWithRelationship(father, "Father");
+            familyWithRelationship.add(fatherWithRelationship);
+        }
+        Person mother = getPersonByID(person.getMotherID());
+        if (mother != null) {
+            PersonWithRelationship motherWithRelationship =
+                    new PersonWithRelationship(mother, "Mother");
+            familyWithRelationship.add(motherWithRelationship);
+        }
+        Person spouse = getPersonByID(person.getSpouseID());
+        if (spouse != null) {
+            PersonWithRelationship spouseWithRelationship =
+                    new PersonWithRelationship(spouse, "Spouse");
+            familyWithRelationship.add(spouseWithRelationship);
+        }
+        Person child = getChildById(person.getPersonID());
+        if (child != null) {
+            PersonWithRelationship childWithRelationship =
+                    new PersonWithRelationship(child, "Child");
+            familyWithRelationship.add(childWithRelationship);
+        }
+        return familyWithRelationship;
+    }
+
+    public Person getChildById(String personID) {
+        return childByID.get(personID);
+    }
+
+    public Person getPersonByID(String personID) {
+        return personByID.get(personID);
+    }
+
+    public Event getEventByEventID(String eventID) {
+        return eventById.get(eventID);
+    }
+
     public static String getSettingKey() {
         return SETTING_KEY;
     }
@@ -262,10 +263,6 @@ public class DataCache {
 
     public Set<Event> getMaleEvents() {
         return maleEvents;
-    }
-
-    public Set<Event> getSelectedEvents() {
-        return selectedEvents;
     }
 
     public void setSelectedEvents(Set<Event> selectedEvents) {
@@ -286,10 +283,6 @@ public class DataCache {
 
     public static String getEventBooleanKey() {
         return EVENT_BOOLEAN_KEY;
-    }
-
-    public static String getMapKey() {
-        return MAP_KEY;
     }
 
     public static int getMaxColorNum() {
@@ -328,7 +321,35 @@ public class DataCache {
         this.selectedEvent = selectedEvent;
     }
 
+    public static String getMapKey() {
+        return MAP_KEY;
+    }
+
+    public Set<Person> getUserPeople() {
+        return userPeople;
+    }
+
     public Set<Event> getUserEvents() {
         return userEvents;
+    }
+
+    public Set<Event> getSelectedEvents() {
+        return selectedEvents;
+    }
+
+    public Map<String, ArrayList<Event>> getPersonEvent() {
+        return personEvent;
+    }
+
+    public Map<String, Person> getPersonByID() {
+        return personByID;
+    }
+
+    public Map<String, Event> getEventById() {
+        return eventById;
+    }
+
+    public Map<String, Person> getChildByID() {
+        return childByID;
     }
 }

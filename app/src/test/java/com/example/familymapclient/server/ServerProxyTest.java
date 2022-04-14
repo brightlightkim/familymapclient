@@ -17,8 +17,6 @@ import Result.RegisterResult;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ServerProxyTest {
     private static ServerProxy server;
-    private static String serverHost;
-    private static String serverPort;
     private static LoginRequest validLoginRequest;
     private static LoginRequest invalidPasswordLoginRequest;
     private static LoginRequest invalidIDLoginRequest;
@@ -27,18 +25,6 @@ public class ServerProxyTest {
     private static LoginResult wrongPasswordLoginResult;
     private static LoginResult wrongIDLoginResult;
 
-    private static String sampleAutoToken;
-    private static String sampleUsername;
-    private static String samplePassword;
-    private static String samplePersonID;
-    private static String sampleEmail;
-    private static String sampleFirstName;
-    private static String sampleLastName;
-    private static String sampleGender;
-
-    private static String failedLoginMessageCuzPassword;
-    private static String failedLoginMessageCuzNoID;
-
     private static RegisterRequest validRegisterRequest;
     private static RegisterRequest invalidRegisterRequest;
 
@@ -46,19 +32,16 @@ public class ServerProxyTest {
     private static RegisterResult invalidRegisterResultCuzAlreadyUsedID;
     private static RegisterResult invalidRegisterResultCuzNotAllFieldIsFilled;
 
-    private static String failedAlreadyRegisteredIDMessage;
-    private static String failedNotRequiredFieldIsFilledMessage;
-
     private static String userAuthToken;
     private static String wrongAuthToken;
     private static String notMatchAuthTokenResultMessage;
 
 
     @BeforeClass
-    public static void settingUp() {
+    public static void setUp() {
         server = ServerProxy.initialize();
-        serverHost = "localhost";
-        serverPort = "8080";
+        String serverHost = "localhost";
+        String serverPort = "8080";
         server.setServerHost(serverHost);
         server.setServerPort(serverPort);
         //SAMPLE DATA SET UP
@@ -76,18 +59,18 @@ public class ServerProxyTest {
         }
         String randomUsername = sb.toString();
 
-        sampleAutoToken = "ab64b978-b2b4-404a-8816-7c223c652008";
-        sampleUsername = "sheila" + randomUsername;
-        samplePassword = "parker";
-        samplePersonID = "Sheila_Parker";
-        sampleEmail = "k2289@byu.edu";
-        sampleFirstName = "sheila";
-        sampleLastName = "parker";
-        sampleGender = "f";
+        String sampleAutoToken = "ab64b978-b2b4-404a-8816-7c223c652008";
+        String sampleUsername = "sheila" + randomUsername;
+        String samplePassword = "parker";
+        String samplePersonID = "Sheila_Parker";
+        String sampleEmail = "k2289@byu.edu";
+        String sampleFirstName = "sheila";
+        String sampleLastName = "parker";
+        String sampleGender = "f";
 
         //REGISTER TEST SET UP
-        failedAlreadyRegisteredIDMessage = "Error: We already have this username";
-        failedNotRequiredFieldIsFilledMessage = "Error: Request Field Is Not Filled";
+        String failedAlreadyRegisteredIDMessage = "Error: We already have this username";
+        String failedNotRequiredFieldIsFilledMessage = "Error: Request Field Is Not Filled";
         validRegisterRequest = new RegisterRequest(
                 sampleUsername, samplePassword, sampleEmail,
                 sampleFirstName, sampleLastName, sampleGender);
@@ -102,8 +85,8 @@ public class ServerProxyTest {
         );
 
         //LOGIN TEST SET UP
-        failedLoginMessageCuzPassword = "Error: Password not match";
-        failedLoginMessageCuzNoID = "Error: No ID that match";
+        String failedLoginMessageCuzPassword = "Error: Password not match";
+        String failedLoginMessageCuzNoID = "Error: No ID that match";
 
         validLoginRequest = new LoginRequest(sampleUsername, "parker");
         invalidPasswordLoginRequest = new LoginRequest(sampleUsername, "1234");
