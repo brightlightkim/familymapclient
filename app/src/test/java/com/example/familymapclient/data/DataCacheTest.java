@@ -11,6 +11,9 @@ import org.junit.runners.MethodSorters;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
 
 import Model.Event;
 import Model.Person;
@@ -27,6 +30,7 @@ import Result.PersonsResult;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DataCacheTest {
     private static DataCache data;
+    private static Setting setting;
     private static LoginResult loginResult;
     private static PersonsResult personsResult;
     private static EventsResult eventsResult;
@@ -59,7 +63,7 @@ public class DataCacheTest {
         eventsResult = server.getEvents(loginResult.getAuthtoken());
 
         data = DataCache.getInstance();
-
+        setting = Setting.getInstance();
         notExistPerson = new Person("not exist", "me",
                 "tae", "yang", "male", "notExistDad",
                 "notExistMom", "notExistSpouse");
@@ -76,7 +80,7 @@ public class DataCacheTest {
     }
 
     @Test
-    public void Test1_setDateFailed(){
+    public void Test1_1_setDateFailed() {
         data.setData(null, null, null);
         assertNull(data.getUser());
         assertNull(data.getUser());
@@ -94,7 +98,7 @@ public class DataCacheTest {
     }
 
     @Test
-    public void Test2_setDataSuccess() {
+    public void Test1_2_setDataSuccess() {
         data.setData(loginResult.getPersonID(), personsResult, eventsResult);
         assertNotNull(data.getEventTypeColor());
         assertEquals(eventTypeColorSize, data.getEventTypeColor().size());
@@ -124,7 +128,7 @@ public class DataCacheTest {
     }
 
     @Test
-    public void Test3_findPeopleWithTextSuccess() {
+    public void Test2_1_findPeopleWithTextSuccess() {
         assertEquals(5, data.findPeopleWithText("s").size());
         assertEquals(1, data.findPeopleWithText("sh").size());
         assertEquals(sheilaParker.getPersonID(),
@@ -140,7 +144,7 @@ public class DataCacheTest {
     }
 
     @Test
-    public void Test4_findPeopleWithTextFailed() {
+    public void Test2_2_findPeopleWithTextFailed() {
         assertNotNull(data.findPeopleWithText("greg"));
         assertNotNull(data.findPeopleWithText("sha"));
         assertEquals(0, data.findPeopleWithText("greg").size());
@@ -148,7 +152,7 @@ public class DataCacheTest {
     }
 
     @Test
-    public void Test5_findEventsWithTextSucceed() {
+    public void Test3_1_findEventsWithTextSucceed() {
         assertEquals(2, data.findEventsWithText("fr").size());
         assertEquals(1, data.findEventsWithText("frog").size());
         assertEquals(frogEvent.getEventID(),
@@ -166,7 +170,7 @@ public class DataCacheTest {
     }
 
     @Test
-    public void Test6_findEventsWithTextFailed(){
+    public void Test3_2_findEventsWithTextFailed() {
         assertNotNull(data.findEventsWithText("greg"));
         assertNotNull(data.findEventsWithText("sha"));
         assertEquals(0, data.findEventsWithText("greg").size());
@@ -174,7 +178,7 @@ public class DataCacheTest {
     }
 
     @Test
-    public void Test7_getFamilyWithRelationship() {
+    public void Test4_1_getFamilyWithRelationshipSucceed() {
         ArrayList<PersonWithRelationship> sheilaFamily = data.getFamilyWithRelationship(sheilaParker);
         assertNotNull(sheilaFamily);
         assertEquals(3, sheilaFamily.size());
@@ -192,10 +196,119 @@ public class DataCacheTest {
     }
 
     @Test
-    public void Test8_getFamilyWithRelationshipFailed() {
+    public void Test4_2_getFamilyWithRelationshipFailed() {
         ArrayList<PersonWithRelationship> nonExistFamily = data.getFamilyWithRelationship(notExistPerson);
-        assertNotNull(nonExistFamily );
-        assertEquals(0,nonExistFamily.size());
+        assertNotNull(nonExistFamily);
+        assertEquals(0, nonExistFamily.size());
+    }
+
+    /**
+     * I implemented this sorting by change in the MapFragment
+     * So I will mock how I changed it here and test it base on that
+     */
+    @Test
+    public void Test5_1_filterEventsBySettingSucceed() {
+        Set<Event> selectedEvents = new HashSet<>();
+        setting.setMaleEventsOn(true);
+        setting.setFemaleEventsOn(true);
+        if (setting.isMaleEventsOn() && setting.isFemaleEventsOn()) {
+            selectedEvents.addAll(data.getMaleEvents());
+            selectedEvents.addAll(data.getFemaleEvents());
+            data.setSelectedEvents(selectedEvents);
+        }
+        assertNotNull(data.getSelectedEvents());
+        assertEquals(userEventsSize, data.getSelectedEvents().size());
+        selectedEvents.clear();
+        setting.setMaleEventsOn(true);
+        setting.setFemaleEventsOn(false);
+        if (setting.isMaleEventsOn() && !setting.isFemaleEventsOn()) {
+            selectedEvents.addAll(data.getMaleEvents());
+            data.setSelectedEvents(selectedEvents);
+        }
+        assertNotNull(data.getSelectedEvents());
+        assertEquals(maleEventsSize, data.getSelectedEvents().size());
+        selectedEvents.clear();
+        setting.setMaleEventsOn(false);
+        setting.setFemaleEventsOn(true);
+        if (setting.isFemaleEventsOn() && !setting.isMaleEventsOn()) {
+            selectedEvents.addAll(data.getFemaleEvents());
+            data.setSelectedEvents(selectedEvents);
+        }
+        assertNotNull(selectedEvents);
+        assertEquals(femaleEventsSize, selectedEvents.size());
+        selectedEvents.clear();
+        setting.setMaleEventsOn(false);
+        setting.setFemaleEventsOn(false);
+        if (!(setting.isMaleEventsOn() && setting.isFemaleEventsOn())) {
+            data.setSelectedEvents(selectedEvents);
+        }
+        assertNotNull(selectedEvents);
+        assertEquals(0, selectedEvents.size());
+        selectedEvents.clear();
+        data.setSelectedEvents(data.getUserEvents());
+    }
+
+    @Test
+    public void Test5_2_filterEventsBySettingFailed(){
+        Set<Event> selectedEvents = new HashSet<>();
+        setting.setMaleEventsOn(true);
+        setting.setFemaleEventsOn(true);
+        if (setting.isMaleEventsOn() && setting.isFemaleEventsOn()) {
+            selectedEvents.addAll(data.getFemaleEvents());
+            data.setSelectedEvents(selectedEvents);
+        }
+        assertNotNull(data.getSelectedEvents());
+        assertNotEquals(userEventsSize, data.getSelectedEvents().size());
+        selectedEvents.clear();
+        setting.setMaleEventsOn(true);
+        setting.setFemaleEventsOn(false);
+        if (setting.isMaleEventsOn() && !setting.isFemaleEventsOn()) {
+            data.setSelectedEvents(selectedEvents);
+        }
+        assertNotNull(data.getSelectedEvents());
+        assertNotEquals(maleEventsSize, data.getSelectedEvents().size());
+        selectedEvents.clear();
+        setting.setMaleEventsOn(false);
+        setting.setFemaleEventsOn(true);
+        if (setting.isFemaleEventsOn() && !setting.isMaleEventsOn()) {
+            selectedEvents.addAll(data.getMaleEvents());
+            selectedEvents.addAll(data.getFemaleEvents());
+            data.setSelectedEvents(selectedEvents);
+        }
+        assertNotNull(selectedEvents);
+        assertNotEquals(femaleEventsSize, selectedEvents.size());
+        selectedEvents.clear();
+        setting.setMaleEventsOn(false);
+        setting.setFemaleEventsOn(false);
+        if (!(setting.isMaleEventsOn() && setting.isFemaleEventsOn())) {
+            selectedEvents.addAll(data.getMaleEvents());
+            data.setSelectedEvents(selectedEvents);
+        }
+        assertNotNull(selectedEvents);
+        assertNotEquals(0, selectedEvents.size());
+        selectedEvents.clear();
+        data.setSelectedEvents(data.getUserEvents());
+    }
+
+    /**
+     * I implemented this function in DataCache as a private function.
+     * So I just used the result from setData() function and check it worked.
+     */
+    @Test
+    public void Test6_1_sortPersonIndividualEventsSucceed() {
+        ArrayList<Event> sheilaLifeEvents = data.getLifeEventsByPersonID(sheilaParker.getPersonID());
+        assertNotNull(sheilaLifeEvents);
+        assertEquals(5, sheilaLifeEvents.size());
+        assertEquals("birth", sheilaLifeEvents.get(0).getEventType().toLowerCase(Locale.ROOT));
+        assertEquals("death", sheilaLifeEvents.get(sheilaLifeEvents.size()-1).getEventType().toLowerCase(Locale.ROOT));
+        assertEquals(2012, sheilaLifeEvents.get(1).getYear());
+        assertEquals(2014, sheilaLifeEvents.get(2).getYear());
+    }
+
+    @Test
+    public void Test6_2_sortPersonIndividualEventsSucceed() {
+        ArrayList<Event> sheilaLifeEvents = data.getLifeEventsByPersonID(notExistPerson.getPersonID());
+        assertNull(sheilaLifeEvents);
     }
 
 }
