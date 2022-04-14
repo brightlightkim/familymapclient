@@ -18,8 +18,10 @@ import java.util.Set;
 import Model.Event;
 import Model.Person;
 import Request.LoginRequest;
+import Result.EventResult;
 import Result.EventsResult;
 import Result.LoginResult;
+import Result.PersonResult;
 import Result.PersonsResult;
 
 /**
@@ -307,8 +309,30 @@ public class DataCacheTest {
 
     @Test
     public void Test6_2_sortPersonIndividualEventsSucceed() {
-        ArrayList<Event> sheilaLifeEvents = data.getLifeEventsByPersonID(notExistPerson.getPersonID());
-        assertNull(sheilaLifeEvents);
+        ArrayList<Event> nonExistPersonLifeList = data.getLifeEventsByPersonID(notExistPerson.getPersonID());
+        assertNull(nonExistPersonLifeList);
+
+        Person unlikelyPerson = new Person("unlikely", "hi", "tae",
+                "yang", "m", null, null, null);
+
+        EventResult sameEvent1 = new EventResult(true, "hi", "no", unlikelyPerson.getPersonID(),
+                11.2f, 11.3f, "Korea", "Provo", "hi", 2022);
+        EventResult sameEvent2 = new EventResult(true, "maybe", "hia", unlikelyPerson.getPersonID(),
+                11.2f, 11.3f, "Korea", "Provo", "hi", 2022);
+
+        PersonResult unlikelyPersonResult = new PersonResult(unlikelyPerson.getAssociatedUsername(),
+                unlikelyPerson.getPersonID(), unlikelyPerson.getFirstName(), unlikelyPerson.getLastName(),
+                unlikelyPerson.getGender(), unlikelyPerson.getFatherID(), unlikelyPerson.getMotherID(),
+                unlikelyPerson.getSpouseID(), true);
+        personsResult.getData().add(unlikelyPersonResult);
+        eventsResult.getData().add(sameEvent1);
+        eventsResult.getData().add(sameEvent2);
+        data.setData(unlikelyPerson.getPersonID(), personsResult, eventsResult);
+        ArrayList<Event> unlikelyPersonLifeList = data.getLifeEventsByPersonID(unlikelyPerson.getPersonID());
+        assertNotNull(unlikelyPersonLifeList);
+        assertEquals(2, unlikelyPersonLifeList.size());
+        assertEquals(unlikelyPersonLifeList.get(0).getYear(), unlikelyPersonLifeList.get(1).getYear());
+        assertEquals(unlikelyPersonLifeList.get(0).getEventType(), unlikelyPersonLifeList.get(1).getEventType());
     }
 
 }
