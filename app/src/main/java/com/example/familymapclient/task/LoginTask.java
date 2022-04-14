@@ -3,25 +3,18 @@ package com.example.familymapclient.task;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.view.View;
-import android.widget.Toast;
 
 import com.example.familymapclient.server.ServerProxy;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import Request.LoginRequest;
-import Result.EventsResult;
 import Result.LoginResult;
-import Result.PersonsResult;
 
 public class LoginTask implements Runnable {
     private final Handler messageHandler;
     private LoginRequest loginRequest;
-    private ServerProxy server;
-    private String serverHost;
-    private String serverPort;
+    private final ServerProxy server;
+    private final String serverHost;
+    private final String serverPort;
     private final static String SUCCESS_KEY = "success";
     private final static String FIRST_NAME = "firstname";
     private final static String LAST_NAME = "lastname";

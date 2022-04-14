@@ -1,6 +1,5 @@
 package com.example.familymapclient.data;
 
-import com.example.familymapclient.fragment.SettingsFragment;
 import com.example.familymapclient.helperModel.PersonWithRelationship;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 
@@ -21,7 +20,6 @@ import Result.PersonsResult;
 public class DataCache {
     private static final String EVENT_BOOLEAN_KEY = "boolean";
     private static final String LOGOUT_KEY = "logout";
-    private static final String MAP_KEY = "map";
     private static final String SETTING_KEY = "setting";
     private static DataCache instance;
 
@@ -319,10 +317,6 @@ public class DataCache {
 
     public void setSelectedEvent(Event selectedEvent) {
         this.selectedEvent = selectedEvent;
-    }
-
-    public static String getMapKey() {
-        return MAP_KEY;
     }
 
     public Set<Person> getUserPeople() {

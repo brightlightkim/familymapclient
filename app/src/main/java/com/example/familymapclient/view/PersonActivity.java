@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import com.example.familymapclient.R;
 import com.example.familymapclient.data.DataCache;
-import com.example.familymapclient.data.Setting;
 import com.example.familymapclient.helperModel.PersonWithRelationship;
 import com.example.familymapclient.util.BuildHelper;
 
@@ -26,21 +25,17 @@ import Model.Person;
 public class PersonActivity extends AppCompatActivity {
     private static final String PERSON_ID_KEY = "PERSONID";
     private static final String EVENT_ID_KEY = "EVENTID";
-    private DataCache data;
     private ArrayList<Event> lifeEvents;
     private ArrayList<PersonWithRelationship> family;
     private Person selectedPerson;
-    private Setting setting;
-    private BuildHelper helper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_person);
 
-        data = DataCache.getInstance();
-        setting = Setting.getInstance();
-        helper = new BuildHelper();
+        DataCache data = DataCache.getInstance();
+        BuildHelper helper = new BuildHelper();
         Intent intent = getIntent();
         String personID = intent.getStringExtra(PERSON_ID_KEY);
         selectedPerson = data.getPersonByID(personID);
@@ -175,9 +170,7 @@ public class PersonActivity extends AppCompatActivity {
                 TextView userOfEventView = lifeEventView.findViewById(R.id.userOfEvent);
                 userOfEventView.setText(helper.personNameToString(selectedPerson));
 
-                lifeEventView.setOnClickListener(v -> {
-                    helper.moveToEventActivity(PersonActivity.this, EVENT_ID_KEY, desiredEvent.getEventID());
-                });
+                lifeEventView.setOnClickListener(v -> helper.moveToEventActivity(PersonActivity.this, EVENT_ID_KEY, desiredEvent.getEventID()));
             }
         }
 
@@ -194,9 +187,7 @@ public class PersonActivity extends AppCompatActivity {
                 String relationshipWithUser = family.get(childPosition).getRelationship();
                 relationshipWithUserView.setText(relationshipWithUser);
 
-                familyView.setOnClickListener(v -> {
-                    helper.moveToPersonActivity(PersonActivity.this, PERSON_ID_KEY, desiredPerson.getPersonID());
-                });
+                familyView.setOnClickListener(v -> helper.moveToPersonActivity(PersonActivity.this, PERSON_ID_KEY, desiredPerson.getPersonID()));
             }
         }
 

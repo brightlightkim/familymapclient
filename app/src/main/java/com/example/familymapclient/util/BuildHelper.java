@@ -21,8 +21,8 @@ import Model.Event;
 import Model.Person;
 
 public class BuildHelper {
-    private DataCache data;
-    private Setting setting;
+    private final DataCache data;
+    private final Setting setting;
     public BuildHelper() {
         data = DataCache.getInstance();
         setting = Setting.getInstance();
@@ -75,7 +75,7 @@ public class BuildHelper {
 
     public void makeGenderIcon(Context context, ImageView icon, String gender) {
         Drawable genderIcon;
-        if (gender.toLowerCase(Locale.ROOT).equals("MALE") || gender.toLowerCase(Locale.ROOT).equals("m")) {
+        if (gender.toLowerCase(Locale.ROOT).equals("male") || gender.toLowerCase(Locale.ROOT).equals("m")) {
             genderIcon = new IconDrawable(context, FontAwesomeIcons.fa_male).colorRes(R.color.male_icon).sizeDp(40);
         } else {
             genderIcon = new IconDrawable(context, FontAwesomeIcons.fa_female).colorRes(R.color.female_icon).sizeDp(40);

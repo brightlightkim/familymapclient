@@ -1,24 +1,15 @@
 package com.example.familymapclient.task;
 
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-
 import com.example.familymapclient.data.DataCache;
 import com.example.familymapclient.server.ServerProxy;
 
 import Result.EventsResult;
-import Result.LoginResult;
 import Result.PersonsResult;
-import Result.RegisterResult;
 
 public class DataTask {
-    private final static String FIRST_NAME = "firstname";
-    private final static String LAST_NAME = "lastname";
-    //private final Handler messageHandler;
     private final String authToken;
-    private ServerProxy server;
-    private DataCache data;
+    private final ServerProxy server;
+    private final DataCache data;
     private String firstName;
     private String lastName;
 

@@ -1,16 +1,8 @@
 package com.example.familymapclient.data;
 
-import android.content.SharedPreferences;
-
-import androidx.preference.SwitchPreferenceCompat;
-
-import com.example.familymapclient.R;
-import com.example.familymapclient.fragment.MapFragment;
-
 public class Setting {
 
     private static Setting instance;
-    private static boolean defaultValue;
     private static boolean isLifeStoryLineOn;
     private static boolean isFamilyTreeLineOn;
     private static boolean isSpouseLineOn;
@@ -26,7 +18,6 @@ public class Setting {
     public synchronized static Setting getInstance() {
         if (instance == null) {
             instance = new Setting();
-            defaultValue = true;
         }
         return instance;
     }

@@ -10,7 +10,6 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import Model.AuthToken;
 import Request.LoginRequest;
 import Request.RegisterRequest;
 import Result.EventsResult;
@@ -23,7 +22,7 @@ public class ServerProxy {
     private static ServerProxy serverProxy;
     private String serverHost;
     private String serverPort;
-    private Gson gson = new Gson();
+    private final Gson gson = new Gson();
 
     public synchronized static ServerProxy initialize()
     {
@@ -54,7 +53,7 @@ public class ServerProxy {
             OutputStream reqBody = http.getOutputStream();
             writeString(requestInfo, reqBody);
             reqBody.close();
-            LoginResult result = null;
+            LoginResult result;
             if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 InputStream respBody = http.getInputStream();
                 String respData = readString(respBody);
@@ -86,7 +85,7 @@ public class ServerProxy {
             OutputStream reqBody = http.getOutputStream();
             writeString(requestInfo, reqBody);
             reqBody.close();
-            RegisterResult result = null;
+            RegisterResult result;
             if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 InputStream respBody = http.getInputStream();
                 String respData = readString(respBody);
@@ -115,7 +114,7 @@ public class ServerProxy {
             http.addRequestProperty("Accept", "application/json");
             http.connect();
 
-            PersonsResult result = null;
+            PersonsResult result;
             if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 InputStream respBody = http.getInputStream();
                 String respData = readString(respBody);
@@ -144,7 +143,7 @@ public class ServerProxy {
             http.addRequestProperty("Accept", "application/json");
             http.connect();
 
-            EventsResult result = null;
+            EventsResult result;
             if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 InputStream respBody = http.getInputStream();
                 String respData = readString(respBody);
@@ -163,9 +162,6 @@ public class ServerProxy {
         return null;
     }
 
-    /*
-        The readString method shows how to read a String from an InputStream.
-    */
     private static String readString(InputStream is) throws IOException {
         StringBuilder sb = new StringBuilder();
         InputStreamReader sr = new InputStreamReader(is);
@@ -177,9 +173,6 @@ public class ServerProxy {
         return sb.toString();
     }
 
-    /*
-        The writeString method shows how to write a String to an OutputStream.
-    */
     private static void writeString(String str, OutputStream os) throws IOException {
         OutputStreamWriter sw = new OutputStreamWriter(os);
         sw.write(str);

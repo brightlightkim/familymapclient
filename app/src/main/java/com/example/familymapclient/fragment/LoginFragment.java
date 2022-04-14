@@ -1,10 +1,5 @@
 package com.example.familymapclient.fragment;
 
-
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -25,7 +20,6 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.example.familymapclient.R;
-import com.example.familymapclient.server.ServerProxy;
 import com.example.familymapclient.task.LoginTask;
 import com.example.familymapclient.task.RegisterTask;
 
@@ -65,10 +59,6 @@ public class LoginFragment extends Fragment {
         void notifyDone();
     }
 
-    public static LoginFragment newInstance() {
-        return new LoginFragment();
-    }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,18 +78,6 @@ public class LoginFragment extends Fragment {
         email = view.findViewById(R.id.emailAddress);
         male = view.findViewById(R.id.male);
         female = view.findViewById(R.id.female);
-        /**
-         * This can be changed later.
-         * It's for the testing
-         */
-        serverHost.setText("10.37.11.53");
-        serverPort.setText("8080");
-        userName.setText("sheila");
-        userPassword.setText("parker");
-        firstName.setText("Sheila");
-        lastName.setText("Parker");
-        email.setText("sheila@parker.com");
-        female.toggle();
 
         setEditTextListeners();
 
@@ -155,9 +133,7 @@ public class LoginFragment extends Fragment {
     }
 
     private void addRadioButtonListener(RadioButton button) {
-        button.setOnClickListener(v -> {
-            checkRegister();
-        });
+        button.setOnClickListener(v -> checkRegister());
     }
 
     private void addEditTextListenerForRegister(EditText text) {
@@ -215,11 +191,9 @@ public class LoginFragment extends Fragment {
 
             RadioGroup radioGroup;
             RadioButton radioButton;
-            radioGroup = (RadioGroup) view.findViewById(R.id.gender);
-            // get selected radio button from radioGroup
+            radioGroup = view.findViewById(R.id.gender);
             int selectedId = radioGroup.getCheckedRadioButtonId();
-            // find the radiobutton by returned id
-            radioButton = (RadioButton) view.findViewById(selectedId);
+            radioButton = view.findViewById(selectedId);
             String gender = radioButton.getText().toString();
 
             RegisterRequest request = new RegisterRequest(
@@ -274,22 +248,3 @@ public class LoginFragment extends Fragment {
     }
 
 }
-
-/**
- * String text is the parameter
- * TEXT_KEY is defined in the beginning of the LoginFragment
- * Send Data to Fragment
- * <p>
- * LoginFragment fragment = new LoginFragment();
- * Bundle arguments = new Bundle(); //Map >> Key Value pairs
- * arguments.putString(LoginFragment.TEXT_KEY, text);
- * fragment.setArguments(arguments);
- * <p>
- * return fragment
- * <p>
- * Where Receiving
- * if (getArgument() != null){
- * TextView textView = view.findViewById(R.id.blabla);
- * String receivedText = getArguments().getString(TEXT_KEY);
- * textView.setText(receivedText);
- */

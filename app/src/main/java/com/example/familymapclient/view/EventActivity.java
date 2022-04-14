@@ -12,10 +12,7 @@ import com.example.familymapclient.R;
 import com.example.familymapclient.data.DataCache;
 import com.example.familymapclient.fragment.MapFragment;
 
-import Model.Event;
-
 public class EventActivity extends AppCompatActivity {
-    private final DataCache data = DataCache.getInstance();
     private static final String EVENT_ID_KEY = "EVENTID";
 
     @Override

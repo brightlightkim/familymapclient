@@ -5,14 +5,10 @@ import android.os.Bundle;
 import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 
 import com.example.familymapclient.R;
 import com.example.familymapclient.data.DataCache;
-import com.example.familymapclient.fragment.MapFragment;
 import com.example.familymapclient.fragment.SettingsFragment;
-import com.google.android.gms.maps.GoogleMap;
 
 public class SettingsActivity extends AppCompatActivity {
     @Override

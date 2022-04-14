@@ -11,10 +11,10 @@ import Result.RegisterResult;
 
 public class RegisterTask implements Runnable{
     private final Handler messageHandler;
-    private RegisterRequest registerRequest;
-    private ServerProxy server;
-    private String serverHost;
-    private String serverPort;
+    private final RegisterRequest registerRequest;
+    private final ServerProxy server;
+    private final String serverHost;
+    private final String serverPort;
     private final static String SUCCESS_KEY = "success";
     private final static String FIRST_NAME = "firstname";
     private final static String LAST_NAME = "lastname";

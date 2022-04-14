@@ -61,9 +61,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private Polyline spouseLine;
     private ArrayList<Polyline> fatherSideLine;
     private ArrayList<Polyline> motherSideLine;
-    private Set<Marker> mapMarkers;
     private BuildHelper helper;
-    private boolean isSettingDone;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -74,6 +72,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         View view = inflater.inflate(R.layout.map_fragment, container, false);
         setting = Setting.getInstance();
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        assert mapFragment != null;
         mapFragment.getMapAsync(this);
         data = DataCache.getInstance();
         icon = view.findViewById(R.id.iconView);
@@ -84,7 +83,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(@NonNull GoogleMap googleMap) {
         map = googleMap;
         map.clear();
         map.setOnMapLoadedCallback(this);
@@ -120,7 +119,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        assert getArguments() != null;
         boolean isEventActivity = getArguments().getBoolean(DataCache.getEventBooleanKey());
         if (isEventActivity) {
             ((EventActivity) getActivity()).getSupportActionBar().setTitle("Family Map: Event");
@@ -176,7 +176,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             events.addAll(data.getFemaleEvents());
         }
         data.setSelectedEvents(events);
-        mapMarkers = new HashSet<>();
         for (Event event : events) {
             LatLng eventPoint = new LatLng(event.getLatitude(), event.getLongitude());
             float color;
@@ -189,8 +188,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                     data.setColorNum(DataCache.getMinColorNum()); //set to minimum number.
                 }
                 data.setColorNum(data.getColorNum() + 1);
-            } // Set until 0-9
-            else { //after setting everything
+            }
+            else {
                 color = data.getEventTypeColor().get(event.getEventType().toLowerCase(Locale.ROOT));
             }
 
@@ -198,22 +197,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                     (color)));
 
             marker.setTag(event);
-
-            mapMarkers.add(marker);
         }
     }
 
     private void makeEventText(Person person, Event event) {
-        StringBuilder text = new StringBuilder();
-        text.append(person.getFirstName()).append(" ").append(person.getLastName());
-        text.append("\n");
-        text.append(event.getEventType()).append(": ").append(event.getCity())
-                .append(" ").append(event.getCountry())
-                .append(" (").append(event.getYear()).append(")");
-        textView.setText(text.toString());
-        textView.setOnClickListener(v -> {
-            helper.moveToPersonActivity(getActivity(), PERSON_ID_KEY, person.getPersonID());
-        });
+        String text = person.getFirstName() + " " + person.getLastName() +
+                "\n" +
+                event.getEventType() + ": " + event.getCity() +
+                " " + event.getCountry() +
+                " (" + event.getYear() + ")";
+        textView.setText(text);
+        textView.setOnClickListener(v -> helper.moveToPersonActivity(getActivity(), PERSON_ID_KEY, person.getPersonID()));
     }
 
     //Call this whenever change occur in setting.
@@ -234,14 +228,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     private void setSetting() {
         SharedPreferences settingPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        boolean defaultSettingValue = true;
-        setting.setLifeStoryLineOn(settingPreferences.getBoolean(getString(R.string.life_story_line_key), defaultSettingValue));
-        setting.setFamilyTreeLineOn(settingPreferences.getBoolean(getString(R.string.family_tree_lines_key), defaultSettingValue));
-        setting.setFatherSideOn(settingPreferences.getBoolean(getString(R.string.father_side_key), defaultSettingValue));
-        setting.setMotherSideOn(settingPreferences.getBoolean(getString(R.string.mother_side_key), defaultSettingValue));
-        setting.setSpouseLineOn(settingPreferences.getBoolean(getString(R.string.spouse_lines_key), defaultSettingValue));
-        setting.setMaleEventsOn(settingPreferences.getBoolean(getString(R.string.filter_male_key), defaultSettingValue));
-        setting.setFemaleEventsOn(settingPreferences.getBoolean(getString(R.string.filter_female_key), defaultSettingValue));
+
+        setting.setLifeStoryLineOn(settingPreferences.getBoolean(getString(R.string.life_story_line_key), true));
+        setting.setFamilyTreeLineOn(settingPreferences.getBoolean(getString(R.string.family_tree_lines_key), true));
+        setting.setFatherSideOn(settingPreferences.getBoolean(getString(R.string.father_side_key), true));
+        setting.setMotherSideOn(settingPreferences.getBoolean(getString(R.string.mother_side_key), true));
+        setting.setSpouseLineOn(settingPreferences.getBoolean(getString(R.string.spouse_lines_key), true));
+        setting.setMaleEventsOn(settingPreferences.getBoolean(getString(R.string.filter_male_key), true));
+        setting.setFemaleEventsOn(settingPreferences.getBoolean(getString(R.string.filter_female_key), true));
     }
 
     private void createFamilyTreeLines(Person person, Event event) {
@@ -252,7 +246,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             ArrayList<Event> fatherLifeEvents = data.getLifeEventsByPersonID(father.getPersonID());
             Event fatherBirthEvent = fatherLifeEvents.get(0);
             makeLineBetweenChildAndParent(event, fatherBirthEvent, "father", DEFAULT_LINE_WIDTH);
-            createParentSideLine(father, fatherBirthEvent, "father", DEFAULT_LINE_WIDTH - 3f);
+            createParentSideLine(father, fatherBirthEvent, DEFAULT_LINE_WIDTH - 3f);
         }
         //gets a person's mother id
         if (person.getMotherID() != null && setting.isMotherSideOn() && setting.isFemaleEventsOn()) {
@@ -260,11 +254,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             ArrayList<Event> motherLifeEvents = data.getLifeEventsByPersonID(mother.getPersonID());
             Event motherBirthEvent = motherLifeEvents.get(0);
             makeLineBetweenChildAndParent(event, motherBirthEvent, "mother", DEFAULT_LINE_WIDTH);
-            createParentSideLine(mother, motherBirthEvent, "mother", DEFAULT_LINE_WIDTH - 3f);
+            createParentSideLine(mother, motherBirthEvent, DEFAULT_LINE_WIDTH - 3f);
         }
     }
 
-    private void createParentSideLine(Person person, Event event, String parent, float lineWidth) {
+    private void createParentSideLine(Person person, Event event, float lineWidth) {
         float shortenedLineWidth = lineWidth - 3f;
         if (shortenedLineWidth <= 2f) {
             shortenedLineWidth = 2f;
@@ -276,7 +270,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             if (father != null && fatherLifeEvents != null) {
                 Event fatherBirthEvent = fatherLifeEvents.get(0);
                 makeLineBetweenChildAndParent(event, fatherBirthEvent, "father", lineWidth);
-                createParentSideLine(father, fatherBirthEvent, parent, shortenedLineWidth);
+                createParentSideLine(father, fatherBirthEvent, shortenedLineWidth);
             }
         }
         //gets a person's mother side
@@ -286,7 +280,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             if (mother != null && motherLifeEvents != null) {
                 Event motherBirthEvent = motherLifeEvents.get(0);
                 makeLineBetweenChildAndParent(event, motherBirthEvent, "mother", lineWidth);
-                createParentSideLine(mother, motherBirthEvent, parent, shortenedLineWidth);
+                createParentSideLine(mother, motherBirthEvent, shortenedLineWidth);
             }
         }
     }

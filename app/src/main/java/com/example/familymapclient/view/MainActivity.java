@@ -1,6 +1,8 @@
 package com.example.familymapclient.view;
 
 import android.annotation.SuppressLint;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,7 +12,6 @@ import android.util.Log;
 
 import com.example.familymapclient.R;
 import com.example.familymapclient.data.DataCache;
-import com.example.familymapclient.util.BuildHelper;
 import com.joanzapata.iconify.Iconify;
 import com.joanzapata.iconify.fonts.FontAwesomeModule;
 import com.example.familymapclient.fragment.LoginFragment;
@@ -19,8 +20,6 @@ import com.example.familymapclient.fragment.MapFragment;
 import Model.Event;
 
 public class MainActivity extends AppCompatActivity implements LoginFragment.Listener {
-    private final String TAG = "MainActivity";
-    private final BuildHelper helper = new BuildHelper();
     private boolean isSettingDone;
 
     @SuppressLint("SetTextI18n")
@@ -60,10 +59,10 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Lis
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle savedInstanceState) {
+    protected void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
+        String TAG = "MainActivity";
         Log.i(TAG, "onSaveInstanceState");
-        //savedInstanceState.putInt(KEY_INDEX, getQuizViewModel().getCurrentIndex());
     }
 
 
